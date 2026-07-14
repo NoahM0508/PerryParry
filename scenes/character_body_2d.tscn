@@ -46,10 +46,14 @@ size = Vector2(22, 10)
 script = ExtResource("1_w0imk")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=744052195]
-position = Vector2(-2, -4)
+position = Vector2(-2, 0)
 sprite_frames = SubResource("SpriteFrames_t2dwb")
 autoplay = "default"
 frame_progress = 0.6664585
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=135091308]
+position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_m2va7")
+
+[node name="WeaponInv" type="Node2D" parent="." unique_id=1435578435]
+position = Vector2(0, -8)

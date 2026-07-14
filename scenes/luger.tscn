@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://cyg7bdk5ljafx"]
+
+[ext_resource type="Texture2D" uid="uid://b7pwocis7mpf6" path="res://PerryParry/assets/Luger.png" id="1_acyed"]
+[ext_resource type="Script" uid="uid://cxuvlyl1n30ra" path="res://PerryParry/scripts/luger.gd" id="1_h7c4e"]
+
+[node name="Luger" type="Node2D" unique_id=331921823]
+script = ExtResource("1_h7c4e")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=13378823]
+texture = ExtResource("1_acyed")
+
+[node name="Muzzle" type="Node2D" parent="." unique_id=1704785079]
+position = Vector2(7, -3)
+
+[node name="Timer" type="Timer" parent="." unique_id=2111194665]
+wait_time = 0.201
+one_shot = true

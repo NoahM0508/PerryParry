@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://c7o1rq2tvi2f1"]
+
+[ext_resource type="PackedScene" uid="uid://cra074shg8hv" path="res://PerryParry/scenes/character_body_2d.tscn" id="1_wgevm"]
+
+[node name="lvl 1" type="Node2D" unique_id=307197169]
+
+[node name="TileMap" type="TileMap" parent="." unique_id=1899417615]
+format = 2
+
+[node name="Perry" parent="." unique_id=242410739 instance=ExtResource("1_wgevm")]
+position = Vector2(10, -23)

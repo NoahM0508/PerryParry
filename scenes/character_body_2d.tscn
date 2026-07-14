@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://cra074shg8hv"]
+
+[ext_resource type="Script" uid="uid://bpo3llmsqsjmi" path="res://PerryParry/scripts/character_body_2d.gd" id="1_62dqk"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_t2dwb"]
+
+[node name="Perry" type="CharacterBody2D" unique_id=242410739]
+script = ExtResource("1_62dqk")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=744052195]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=135091308]
+shape = SubResource("CapsuleShape2D_t2dwb")

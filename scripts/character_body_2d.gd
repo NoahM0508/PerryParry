@@ -35,14 +35,14 @@ func _physics_process(delta: float) -> void:
 			modulate.a = 1.0
 
 	var input_direction: Vector2 = Vector2(
-		Input.get_axis("ui_left", "ui_right"),
-		Input.get_axis("ui_up", "ui_down")
+		Input.get_axis("Left", "Right"),
+		Input.get_axis("Up", "Down")
 	).normalized()
 
 	if input_direction.length_squared() > 0.0:
 		last_direction = input_direction
 
-	var dash_pressed: bool = Input.is_action_just_pressed("dash") or Input.is_action_just_pressed("ui_accept")
+	var dash_pressed: bool = Input.is_action_just_pressed("L_Shift") or Input.is_action_just_pressed("ui_accept")
 	if dash_pressed and dash_cooldown_timer <= 0.0:
 		if input_direction.length_squared() > 0.0:
 			start_dash(input_direction)

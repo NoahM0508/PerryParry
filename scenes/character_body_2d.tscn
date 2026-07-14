@@ -1,13 +1,55 @@
 [gd_scene format=3 uid="uid://cra074shg8hv"]
 
-[ext_resource type="Script" uid="uid://bpo3llmsqsjmi" path="res://PerryParry/scripts/character_body_2d.gd" id="1_62dqk"]
+[ext_resource type="Script" uid="uid://bpo3llmsqsjmi" path="res://PerryParry/scripts/character_body_2d.gd" id="1_w0imk"]
+[ext_resource type="Texture2D" uid="uid://bswabao1gxgp2" path="res://PerryParry/assets/Beaver_Sheet.png" id="2_fbsvl"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_t2dwb"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_ei6vn"]
+atlas = ExtResource("2_fbsvl")
+region = Rect2(0, 0, 64, 97)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mxjr3"]
+atlas = ExtResource("2_fbsvl")
+region = Rect2(128, 0, 64, 97)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vll63"]
+atlas = ExtResource("2_fbsvl")
+region = Rect2(256, 0, 64, 97)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_olmil"]
+atlas = ExtResource("2_fbsvl")
+region = Rect2(384, 0, 64, 97)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_t2dwb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ei6vn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mxjr3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vll63")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_olmil")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m2va7"]
+size = Vector2(22, 10)
 
 [node name="Perry" type="CharacterBody2D" unique_id=242410739]
-script = ExtResource("1_62dqk")
+script = ExtResource("1_w0imk")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=744052195]
+position = Vector2(-2, -4)
+sprite_frames = SubResource("SpriteFrames_t2dwb")
+autoplay = "default"
+frame_progress = 0.6664585
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=135091308]
-shape = SubResource("CapsuleShape2D_t2dwb")
+shape = SubResource("RectangleShape2D_m2va7")

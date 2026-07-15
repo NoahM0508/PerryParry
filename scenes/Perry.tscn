@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://cra074shg8hv"]
 
-[ext_resource type="Script" uid="uid://bpo3llmsqsjmi" path="res://PerryParry/scripts/character_body_2d.gd" id="1_w0imk"]
+[ext_resource type="Script" uid="uid://bpo3llmsqsjmi" path="res://PerryParry/scripts/Perry.gd" id="1_dwos7"]
+[ext_resource type="Resource" uid="uid://dsparlinftjmx" path="res://PerryParry/resources/starter_pistol.tres" id="2_1ku1c"]
+[ext_resource type="PackedScene" uid="uid://c64xjkaf02y3k" path="res://PerryParry/scenes/weapon.tscn" id="2_dbm6c"]
 [ext_resource type="Texture2D" uid="uid://bswabao1gxgp2" path="res://PerryParry/assets/Beaver_Sheet.png" id="2_fbsvl"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ei6vn"]
@@ -42,8 +44,10 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_m2va7"]
 size = Vector2(22, 10)
 
-[node name="Perry" type="CharacterBody2D" unique_id=242410739]
-script = ExtResource("1_w0imk")
+[node name="Perry" type="CharacterBody2D" unique_id=242410739 groups=["Player"]]
+script = ExtResource("1_dwos7")
+master_weapon_scene = ExtResource("2_dbm6c")
+starting_weapon_stats = ExtResource("2_1ku1c")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=744052195]
 position = Vector2(-2, 0)
@@ -56,4 +60,3 @@ position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_m2va7")
 
 [node name="WeaponInv" type="Node2D" parent="." unique_id=1435578435]
-position = Vector2(0, -8)

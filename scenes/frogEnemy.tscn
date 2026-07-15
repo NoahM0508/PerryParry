@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://57geme2050pk"]
+
+[ext_resource type="Script" uid="uid://chvaq6g4xlia6" path="res://PerryParry/scripts/base_enemy.gd" id="1_2spja"]
+[ext_resource type="Texture2D" uid="uid://dl6xx3tey2laf" path="res://PerryParry/assets/Frog_Sheet.png" id="2_656vu"]
+[ext_resource type="PackedScene" uid="uid://c64xjkaf02y3k" path="res://PerryParry/scenes/weapon.tscn" id="3_y0dmv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h02al"]
+atlas = ExtResource("2_656vu")
+region = Rect2(0, 0, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vk7hx"]
+atlas = ExtResource("2_656vu")
+region = Rect2(128, 0, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wcy1p"]
+atlas = ExtResource("2_656vu")
+region = Rect2(256, 0, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ygxcu"]
+atlas = ExtResource("2_656vu")
+region = Rect2(384, 0, 128, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_t2dwb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h02al")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vk7hx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wcy1p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ygxcu")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 4.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m2va7"]
+size = Vector2(17, 8)
+
+[sub_resource type="Theme" id="Theme_1eg6m"]
+
+[node name="EnemyRootNode" type="CharacterBody2D" unique_id=1792243361]
+script = ExtResource("1_2spja")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=42471132]
+position = Vector2(33, -20)
+sprite_frames = SubResource("SpriteFrames_t2dwb")
+autoplay = "default"
+frame_progress = 0.6271558
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1483303573]
+position = Vector2(2.5, 1)
+shape = SubResource("RectangleShape2D_m2va7")
+
+[node name="PlayerDetector" type="RayCast2D" parent="." unique_id=739903067]
+target_position = Vector2(31, 0)
+collision_mask = 5
+
+[node name="StateTimer" type="Timer" parent="." unique_id=400550307]
+
+[node name="WeaponRoot" parent="." unique_id=1971519975 instance=ExtResource("3_y0dmv")]
+aim_at_cursor = false
+
+[node name="EnemyHealth" type="ProgressBar" parent="." unique_id=870818176]
+offset_left = -10.0
+offset_top = 9.0
+offset_right = 9.0
+offset_bottom = 13.0
+theme = SubResource("Theme_1eg6m")
+show_percentage = false

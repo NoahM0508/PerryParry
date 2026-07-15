@@ -1,17 +1,18 @@
 [gd_scene format=3 uid="uid://bns8kd53f2yov"]
 
-[ext_resource type="Script" uid="uid://dw0e1hwc0poa0" path="res://PerryParry/scripts/Pistol Projectile.gd" id="1_85vn8"]
 [ext_resource type="Texture2D" uid="uid://dp8ol7yw4vgh" path="res://PerryParry/assets/PistolAmmoSmall.png" id="1_jvwyd"]
+[ext_resource type="Script" uid="uid://dw0e1hwc0poa0" path="res://PerryParry/scripts/Pistol_Projectile.gd" id="1_mwl43"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t2dwb"]
-size = Vector2(6, 4)
+size = Vector2(6.161512, 4.0618553)
 
 [node name="Pistol Projectile" type="Area2D" unique_id=1426036578]
-scale = Vector2(7.275, 7.275)
-script = ExtResource("1_85vn8")
+scale = Vector2(1.08, 1.08)
+script = ExtResource("1_mwl43")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1518996220]
 texture = ExtResource("1_jvwyd")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=146289143]
+position = Vector2(0.08075595, -0.030927777)
 shape = SubResource("RectangleShape2D_t2dwb")

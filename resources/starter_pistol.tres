@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://dsparlinftjmx"]
+
+[ext_resource type="Script" uid="uid://dxy6j5tfoppal" path="res://PerryParry/scripts/weapon_stats.gd" id="1_apqnb"]
+[ext_resource type="Texture2D" uid="uid://b7pwocis7mpf6" path="res://PerryParry/assets/Luger.png" id="2_x1ool"]
+
+[resource]
+script = ExtResource("1_apqnb")
+weapon_name = "Luger"
+weapon_texture = ExtResource("2_x1ool")
+muzzle_position = Vector2(7, -4)
+metadata/_custom_type_script = "uid://dxy6j5tfoppal"

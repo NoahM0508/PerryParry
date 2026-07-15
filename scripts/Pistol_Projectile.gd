@@ -1,7 +1,7 @@
 extends Area2D
 
 @export var damage: int = 10
-@export var speed: float = 80.0 # pixels per second
+@export var speed: float = 800.0 # pixels per second
 @export var max_range: float = 1000.0
 
 var direction: Vector2 = Vector2.RIGHT
@@ -36,4 +36,4 @@ func _on_body_entered(body: Node) -> void:
 		return
 	if body.has_method("take_damage"):
 		body.call("take_damage", damage)
-		queue_free()
+	queue_free()

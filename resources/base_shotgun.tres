@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://b78cq05w23nk2"]
+
+[ext_resource type="Script" uid="uid://dxy6j5tfoppal" path="res://PerryParry/scripts/weapon_stats.gd" id="1_hp4cw"]
+[ext_resource type="Texture2D" uid="uid://byy16gvo6curn" path="res://PerryParry/assets/Guns/SawedOffShotgun.png" id="2_puj1k"]
+
+[resource]
+script = ExtResource("1_hp4cw")
+weapon_type = "Shotgun"
+weapon_texture = ExtResource("2_puj1k")
+muzzle_position = Vector2(13, -2)
+fire_pattern = 1
+damage = 5.0
+fire_rate = 1.5
+number_of_projectiles = 6
+spread_angle = 45.0
+metadata/_custom_type_script = "uid://dxy6j5tfoppal"

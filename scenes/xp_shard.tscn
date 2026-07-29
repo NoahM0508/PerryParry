@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://ci2cu771uwvie"]
+
+[ext_resource type="Script" uid="uid://kmdbdaagyf7o" path="res://PerryParry/scripts/xp_shard.gd" id="1_qox84"]
+[ext_resource type="Texture2D" uid="uid://neb82ib6m15" path="res://PerryParry/assets/tiles/pebble2.png" id="2_xgl8j"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t2dwb"]
+size = Vector2(4, 4)
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_m2va7"]
+diffuse_texture = ExtResource("2_xgl8j")
+
+[node name="Xp_Shard" type="Area2D" unique_id=1263922303]
+script = ExtResource("1_qox84")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1463303876]
+position = Vector2(1, -2)
+shape = SubResource("RectangleShape2D_t2dwb")
+
+[node name="GPUParticles2D" type="Sprite2D" parent="." unique_id=1930584889]
+position = Vector2(1, 0)
+texture = SubResource("CanvasTexture_m2va7")

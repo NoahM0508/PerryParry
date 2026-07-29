@@ -1,9 +1,12 @@
 [gd_scene format=3 uid="uid://cra074shg8hv"]
 
 [ext_resource type="Script" uid="uid://bpo3llmsqsjmi" path="res://PerryParry/scripts/Perry.gd" id="1_dwos7"]
-[ext_resource type="Resource" uid="uid://dsparlinftjmx" path="res://PerryParry/resources/starter_pistol.tres" id="2_1ku1c"]
 [ext_resource type="PackedScene" uid="uid://c64xjkaf02y3k" path="res://PerryParry/scenes/weapon.tscn" id="2_dbm6c"]
 [ext_resource type="Texture2D" uid="uid://bswabao1gxgp2" path="res://PerryParry/assets/Beaver_Sheet.png" id="2_fbsvl"]
+[ext_resource type="Resource" uid="uid://b2pdhr2ghjwwd" path="res://PerryParry/resources/weapons/Epic/Epic Revolver.tres" id="3_dbm6c"]
+[ext_resource type="PackedScene" uid="uid://eavcnieyqfhu" path="res://PerryParry/scenes/floor_weapon.tscn" id="4_dbm6c"]
+[ext_resource type="Texture2D" uid="uid://8n8tbu0hup2h" path="res://PerryParry/assets/brackeys_vfx_bundle/particles/alpha/magic_03_a.png" id="6_dkvs5"]
+[ext_resource type="Texture2D" uid="uid://b3qihbf0e0x2c" path="res://PerryParry/assets/brackeys_vfx_bundle/particles/alpha/smoke_03_a.png" id="6_jsvmq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ei6vn"]
 atlas = ExtResource("2_fbsvl")
@@ -44,19 +47,64 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_m2va7"]
 size = Vector2(22, 10)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_t2dwb"]
+radius = 27.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_enjla"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 0, 0)
+scale_min = 0.08
+scale_max = 0.08
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_uhjpm"]
+particle_flag_disable_z = true
+inherit_velocity_ratio = 0.135
+spread = 106.875
+gravity = Vector3(0, 0, 0)
+scale_min = 0.07
+scale_max = 0.08
+
 [node name="Perry" type="CharacterBody2D" unique_id=242410739 groups=["Player"]]
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("1_dwos7")
 master_weapon_scene = ExtResource("2_dbm6c")
-starting_weapon_stats = ExtResource("2_1ku1c")
+starting_weapon_stats = ExtResource("3_dbm6c")
+floor_weapon_scene = ExtResource("4_dbm6c")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=744052195]
-position = Vector2(-2, 0)
+position = Vector2(-3, -5)
 sprite_frames = SubResource("SpriteFrames_t2dwb")
 autoplay = "default"
 frame_progress = 0.6664585
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=135091308]
-position = Vector2(0, 4)
+position = Vector2(0, -1)
 shape = SubResource("RectangleShape2D_m2va7")
 
-[node name="WeaponInv" type="Node2D" parent="." unique_id=1435578435]
+[node name="ParryHitbox" type="Area2D" parent="." unique_id=962733]
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParryHitbox" unique_id=1795339607]
+shape = SubResource("CircleShape2D_t2dwb")
+
+[node name="ParrySparks" type="GPUParticles2D" parent="ParryHitbox" unique_id=1755744217]
+emitting = false
+amount = 1
+texture = ExtResource("6_dkvs5")
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_enjla")
+
+[node name="DashParticles2D" type="GPUParticles2D" parent="." unique_id=1560606566]
+position = Vector2(-12, -1.9999999)
+scale = Vector2(0.55968267, 0.45754567)
+emitting = false
+amount = 10
+texture = ExtResource("6_jsvmq")
+lifetime = 0.5
+process_material = SubResource("ParticleProcessMaterial_uhjpm")
+
+[connection signal="area_entered" from="ParryHitbox" to="." method="_on_parry_hitbox_area_entered"]

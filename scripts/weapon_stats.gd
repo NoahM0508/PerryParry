@@ -9,9 +9,11 @@ enum FirePattern { SINGLE_SHOT, SHOTGUN, LASER, BURST_SHOT }
 @export var weapon_name: String = "New Weapon"
 @export var weapon_type: String = "Pistol"
 @export var weapon_texture: Texture2D
+@export var projectile_scene: PackedScene
 @export var muzzle_position: Vector2 = Vector2(10, -2) # The X,Y coordinates of the barrel
 @export var rarity: Rarity = Rarity.COMMON
 @export var rarity_color: Color = Color(0.5, 0.5, 0.5) # Default Gray
+@export var ammo_icon: Texture2D
 
 @export_category("Basic Stats")
 @export var fire_pattern: FirePattern = FirePattern.SINGLE_SHOT

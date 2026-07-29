@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://n7q30isrgcam"]
+
+[ext_resource type="Texture2D" uid="uid://0j5vx3ed5xpv" path="res://PerryParry/assets/Bullets/RifleAmmoBig.png" id="1_yil7d"]
+[ext_resource type="PackedScene" uid="uid://6jayo0nooeje" path="res://PerryParry/scenes/rifle_ammo.tscn" id="2_6asko"]
+[ext_resource type="Script" uid="uid://dxy6j5tfoppal" path="res://PerryParry/scripts/weapon_stats.gd" id="3_bqdkp"]
+[ext_resource type="Texture2D" uid="uid://cm5ruhq4cldc3" path="res://PerryParry/assets/Guns/M24.png" id="4_g6mnp"]
+
+[resource]
+script = ExtResource("3_bqdkp")
+weapon_name = "M24"
+weapon_type = "Sniper"
+weapon_texture = ExtResource("4_g6mnp")
+projectile_scene = ExtResource("2_6asko")
+muzzle_position = Vector2(17, -2)
+rarity = 1
+rarity_color = Color(0.105882354, 0.60784316, 0, 1)
+ammo_icon = ExtResource("1_yil7d")
+damage = 20.0
+fire_rate = 1.0
+magazine_size = 4
+reload_time = 3.0
+knockback = 200.0
+metadata/_custom_type_script = "uid://dxy6j5tfoppal"

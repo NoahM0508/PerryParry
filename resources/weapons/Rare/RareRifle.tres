@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://drbe14w4nxxpf"]
+
+[ext_resource type="Texture2D" uid="uid://0j5vx3ed5xpv" path="res://PerryParry/assets/Bullets/RifleAmmoBig.png" id="1_0iy7t"]
+[ext_resource type="Script" uid="uid://dxy6j5tfoppal" path="res://PerryParry/scripts/weapon_stats.gd" id="1_65k32"]
+[ext_resource type="PackedScene" uid="uid://6jayo0nooeje" path="res://PerryParry/scenes/rifle_ammo.tscn" id="2_4ixnd"]
+[ext_resource type="Texture2D" uid="uid://c0sqxbgmwcfyc" path="res://PerryParry/assets/Guns/M15.png" id="2_h2frw"]
+
+[resource]
+script = ExtResource("1_65k32")
+weapon_name = "M15"
+weapon_type = "Rifle"
+weapon_texture = ExtResource("2_h2frw")
+projectile_scene = ExtResource("2_4ixnd")
+muzzle_position = Vector2(15, -3)
+rarity = 2
+rarity_color = Color(0, 0.47843137, 1, 1)
+ammo_icon = ExtResource("1_0iy7t")
+fire_rate = 10.795
+magazine_size = 20
+reload_time = 2.0
+accuracy = 0.8
+metadata/_custom_type_script = "uid://dxy6j5tfoppal"

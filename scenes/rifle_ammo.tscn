@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://6jayo0nooeje"]
+
+[ext_resource type="Script" uid="uid://dph2lillik408" path="res://PerryParry/scripts/RifleAmmo.gd" id="1_hd2qi"]
+[ext_resource type="Texture2D" uid="uid://0j5vx3ed5xpv" path="res://PerryParry/assets/Bullets/RifleAmmoBig.png" id="2_5gm1l"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t2dwb"]
+size = Vector2(14, 6)
+
+[node name="RifleAmmo" type="Area2D" unique_id=457929352]
+script = ExtResource("1_hd2qi")
+
+[node name="RifleAmmoBig" type="Sprite2D" parent="." unique_id=958435722]
+texture = ExtResource("2_5gm1l")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1125994283]
+shape = SubResource("RectangleShape2D_t2dwb")

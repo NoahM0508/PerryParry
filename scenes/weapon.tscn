@@ -2,19 +2,15 @@
 
 [ext_resource type="Script" uid="uid://dc4mtjdts36uh" path="res://PerryParry/scripts/weapon.gd" id="1_thqm8"]
 [ext_resource type="Texture2D" uid="uid://ggfxqgj5rfng" path="res://PerryParry/assets/Reload.png" id="2_rkivl"]
-[ext_resource type="Resource" uid="uid://dsparlinftjmx" path="res://PerryParry/resources/starter_pistol.tres" id="2_xsuqc"]
-[ext_resource type="PackedScene" uid="uid://bns8kd53f2yov" path="res://PerryParry/scenes/Pistol_Projectile.tscn" id="3_rkivl"]
 
 [node name="WeaponRoot" type="Node2D" unique_id=1971519975]
 script = ExtResource("1_thqm8")
-stats = ExtResource("2_xsuqc")
-projectile_scene = ExtResource("3_rkivl")
 reload_texture = ExtResource("2_rkivl")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=332960833]
 
 [node name="Muzzle" type="Node2D" parent="." unique_id=912255123]
-position = Vector2(13, -2)
+position = Vector2(15, -3)
 
 [node name="FireTimer" type="Timer" parent="." unique_id=1928895639]
 

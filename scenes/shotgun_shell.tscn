@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://dyac5xh1bgv3s"]
+
+[ext_resource type="Script" uid="uid://7ygk61abi45o" path="res://PerryParry/scripts/shotgun_shell.gd" id="1_3hem3"]
+[ext_resource type="Texture2D" uid="uid://b5xknj4hjn33t" path="res://PerryParry/assets/Bullets/ShotgunShellSmall.png" id="1_aypok"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t2dwb"]
+size = Vector2(9, 4)
+
+[node name="ShotgunShell" type="Area2D" unique_id=1975991482]
+script = ExtResource("1_3hem3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=677100198]
+position = Vector2(0.5, 0)
+shape = SubResource("RectangleShape2D_t2dwb")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1316833599]
+texture = ExtResource("1_aypok")

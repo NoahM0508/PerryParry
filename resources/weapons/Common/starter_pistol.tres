@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://dsparlinftjmx"]
+
+[ext_resource type="Texture2D" uid="uid://dp8ol7yw4vgh" path="res://PerryParry/assets/PistolAmmoSmall.png" id="1_aecqr"]
+[ext_resource type="PackedScene" uid="uid://bns8kd53f2yov" path="res://PerryParry/scenes/Pistol_Projectile.tscn" id="2_cc1ue"]
+[ext_resource type="Script" uid="uid://dxy6j5tfoppal" path="res://PerryParry/scripts/weapon_stats.gd" id="3_8fxdf"]
+[ext_resource type="Texture2D" uid="uid://b7pwocis7mpf6" path="res://PerryParry/assets/Luger.png" id="4_lyubt"]
+
+[resource]
+script = ExtResource("3_8fxdf")
+weapon_name = "Luger"
+weapon_texture = ExtResource("4_lyubt")
+projectile_scene = ExtResource("2_cc1ue")
+muzzle_position = Vector2(7, -4)
+ammo_icon = ExtResource("1_aecqr")
+spread_angle = 20.0
+metadata/_custom_type_script = "uid://dxy6j5tfoppal"

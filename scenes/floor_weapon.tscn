@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://eavcnieyqfhu"]
+
+[ext_resource type="Script" uid="uid://boqq7qftql7c2" path="res://PerryParry/scripts/floor_weapon.gd" id="1_i6col"]
+[ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/BoldPixels.ttf" id="2_uhjpm"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_t2dwb"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 14.33
+gravity = Vector3(0, -20, 0)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_t2dwb"]
+
+[node name="floor_weapon" type="Area2D" unique_id=1314846599]
+script = ExtResource("1_i6col")
+
+[node name="GlowParticles" type="GPUParticles2D" parent="." unique_id=1374986950]
+amount = 25
+process_material = SubResource("ParticleProcessMaterial_t2dwb")
+
+[node name="WeaponSprite" type="Sprite2D" parent="." unique_id=1430899089]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=247788142]
+shape = SubResource("CircleShape2D_t2dwb")
+
+[node name="RarityLabel" type="Label" parent="." unique_id=211095559]
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -16.0
+offset_top = -13.0
+offset_right = 17.0
+offset_bottom = 1.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("2_uhjpm")
+theme_override_font_sizes/font_size = 12

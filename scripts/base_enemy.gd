@@ -22,13 +22,22 @@ enum State { IDLE, CHASE, ATTACK, COVER, HEAL, DEAD }
 @export var heal_amount: int = 5
 @export var heal_interval: float = 0.5
 
+
+@export_category("Drops")
+@export var xp_shard_scene: PackedScene
+@export var floor_weapon_scene: PackedScene
+@export var drop_chance: float = 1 # 25% chance to drop a weapon
+
+@export_category("Loot Settings")
+@export var weapons_folder: String = "res://PerryParry/resources/weapons/"
+
 # =====================================================
 # NODES
 # =====================================================
 
 @onready var player_detector: RayCast2D = $PlayerDetector
 @onready var state_timer: Timer = $StateTimer
-@onready var weapon: Node2D = $WeaponRoot
+@onready var weapon = $Weapon
 
 # =====================================================
 # VARIABLES
@@ -45,7 +54,8 @@ var player_ref: CharacterBody2D = null
 
 func _ready() -> void:
 	current_health = max_health
-
+	equip_random_weapon()
+	
 	if health_bar:
 		health_bar.max_value = max_health
 		health_bar.value = current_health
@@ -198,10 +208,58 @@ func can_see_player() -> bool:
 			return true
 			
 	return false
-
+#=====================================================
+# WEAPON RANDOMIZATION
+#=====================================================
+func roll_weapon_rarity() -> String:
+	var roll: float = randf() # Rolls a number between 0.00 and 1.00
+	
+	# The Weighted Loot Table (Adjust these percentages to balance your game!)
+	if roll <= 0.50:
+		return "Common"      # 50% chance
+	elif roll <= 0.75:
+		return "Uncommon"    # 25% chance
+	elif roll <= 0.90:
+		return "Rare"        # 15% chance
+	elif roll <= 0.97:
+		return "Epic"        # 7% chance
+	elif roll <= 0.995:
+		return "Legendary"   # 2.5% chance
+	else:
+		return "Mythic"      # 0.5% chance
 # =====================================================
 # WEAPON
 # =====================================================
+
+func equip_random_weapon() -> void:
+	# 1. Roll for the rarity folder
+	var rarity_folder: String = roll_weapon_rarity()
+	
+	# 2. Build the exact folder path
+	var folder_path: String = "res://PerryParry/resources/weapons/" + rarity_folder + "/"
+	var dir = DirAccess.open(folder_path)
+	
+	if dir:
+		# Godot scans the folder instantly to find our files[cite: 118, 119]
+		var files = dir.get_files()
+		var weapon_files = []
+		
+		for file in files:
+			# Safety check to strip out .remap extensions when the game is eventually exported[cite: 120, 121]
+			if file.ends_with(".tres") or file.ends_with(".tres.remap"):
+				weapon_files.append(file.replace(".remap", ""))
+		
+		# 3. Pick a random weapon from the chosen folder and equip it
+		if weapon_files.size() > 0:
+			var random_file = weapon_files[randi() % weapon_files.size()]
+			var weapon_stats = load(folder_path + random_file)
+			
+			if weapon_stats and weapon != null:
+				weapon.stats = weapon_stats
+				# Force _ready() to run again so the gun instantly updates its pixel art and fire rate timers[cite: 122]
+				weapon._ready() 
+	else:
+		printerr("Enemy AI Error: Could not open weapon folder at ", folder_path)
 
 func fire_weapon() -> void:
 	if not can_attack or not player_exists() or weapon == null:
@@ -214,6 +272,13 @@ func fire_weapon() -> void:
 	
 	# 2. Rotate the gun visually so the barrel points at the player
 	weapon.rotation = direction.angle()
+	
+	# --- NEW FLIP LOGIC ---
+	# If direction.x is negative, they are aiming left.
+	# This flips the weapon's sprite vertically so it stays right-side up!
+	if weapon.sprite:
+		weapon.sprite.flip_v = (direction.x < 0)
+	# ----------------------
 	
 	# 3. Pull the trigger! We pass 'direction' for the bullet, and 'self' so the bullet knows the enemy fired it
 	if weapon.has_method("fire_weapon"):
@@ -253,8 +318,22 @@ func take_damage(amount: int) -> void:
 func die() -> void:
 	current_health = 0
 	change_state(State.DEAD)
-	# TODO: Phase 8 - Spawn loot pickup here before queue_free!
-	queue_free()
+	
+	if xp_shard_scene:
+		var shard = xp_shard_scene.instantiate()
+		shard.global_position = global_position
+		get_tree().current_scene.add_child(shard)
+		
+	if floor_weapon_scene and weapon != null:
+		if randf() <= drop_chance:
+			var drop = floor_weapon_scene.instantiate()
+			print("Weapon Dropped!")
+			drop.global_position = global_position
+			if "stats" in weapon:
+				drop.stats = weapon.stats
+			get_tree().current_scene.call_deferred("add_child", drop)
+	
+	call_deferred("queue_free")
 
 func _on_state_timer_timeout() -> void:
 	if current_state != State.HEAL:

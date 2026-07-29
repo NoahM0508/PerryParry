@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://57geme2050pk"]
 
 [ext_resource type="Script" uid="uid://chvaq6g4xlia6" path="res://PerryParry/scripts/base_enemy.gd" id="1_2spja"]
+[ext_resource type="PackedScene" uid="uid://ci2cu771uwvie" path="res://PerryParry/scenes/xp_shard.tscn" id="2_6rnnk"]
 [ext_resource type="Texture2D" uid="uid://dl6xx3tey2laf" path="res://PerryParry/assets/Frog_Sheet.png" id="2_656vu"]
+[ext_resource type="PackedScene" uid="uid://eavcnieyqfhu" path="res://PerryParry/scenes/floor_weapon.tscn" id="3_blqyq"]
 [ext_resource type="PackedScene" uid="uid://c64xjkaf02y3k" path="res://PerryParry/scenes/weapon.tscn" id="3_y0dmv"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h02al"]
@@ -45,8 +47,26 @@ size = Vector2(17, 8)
 
 [sub_resource type="Theme" id="Theme_1eg6m"]
 
-[node name="EnemyRootNode" type="CharacterBody2D" unique_id=1792243361]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6g1sh"]
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a23fs"]
+bg_color = Color(0.60788375, 0.040746786, 0.11110436, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="Frog" type="CharacterBody2D" unique_id=1792243361]
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("1_2spja")
+xp_shard_scene = ExtResource("2_6rnnk")
+floor_weapon_scene = ExtResource("3_blqyq")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=42471132]
 position = Vector2(33, -20)
@@ -64,13 +84,16 @@ collision_mask = 5
 
 [node name="StateTimer" type="Timer" parent="." unique_id=400550307]
 
-[node name="WeaponRoot" parent="." unique_id=1971519975 instance=ExtResource("3_y0dmv")]
-aim_at_cursor = false
-
 [node name="EnemyHealth" type="ProgressBar" parent="." unique_id=870818176]
-offset_left = -10.0
+offset_left = -9.0
 offset_top = 9.0
-offset_right = 9.0
+offset_right = 10.0
 offset_bottom = 13.0
 theme = SubResource("Theme_1eg6m")
+theme_override_styles/background = SubResource("StyleBoxFlat_6g1sh")
+theme_override_styles/fill = SubResource("StyleBoxFlat_a23fs")
 show_percentage = false
+
+[node name="Weapon" parent="." unique_id=1971519975 instance=ExtResource("3_y0dmv")]
+aim_at_cursor = false
+reload_texture = null

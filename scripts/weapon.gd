@@ -8,7 +8,6 @@ signal reload_finished()
 # --- MODULAR DATA ---
 @export_category("Weapon Configuration")
 @export var stats: WeaponStats
-@export var projectile_scene: PackedScene
 
 # --- NODES ---
 @export_category("Node References")
@@ -93,8 +92,21 @@ func _process(delta: float) -> void:
 		aim_direction = dir.normalized()
 		rotation = aim_direction.angle()
 
+# --- NEW FLIP LOGIC ---
+	# If aim_direction.x is negative, we are aiming left. 
+	# This flips the sprite vertically so it stays right-side up!
+	if sprite:
+		sprite.flip_v = (aim_direction.x < 0)
+	# ----------------------
+
+	# Handle spinning reload cursor
+	if is_reloading and reload_sprite and reload_sprite.visible:
+		reload_sprite.global_position = get_global_mouse_position()
+		reload_sprite.rotation += 10.0 * delta
+
 func can_fire() -> bool:
-	return can_shoot and not is_reloading and current_ammo > 0 and projectile_scene != null and stats != null
+	# UPDATED: Now checks stats.projectile_scene instead of the old local variable
+	return can_shoot and not is_reloading and current_ammo > 0 and stats != null and stats.projectile_scene != null
 
 func fire_weapon(direction: Vector2 = Vector2.RIGHT, shooter = null) -> void:
 	if not can_fire():
@@ -109,7 +121,8 @@ func fire_weapon(direction: Vector2 = Vector2.RIGHT, shooter = null) -> void:
 	
 	# Loop to spawn the correct number of projectiles
 	for i in range(stats.number_of_projectiles):
-		var projectile = projectile_scene.instantiate()
+		# UPDATED: Instantiate directly from the stats file!
+		var projectile = stats.projectile_scene.instantiate()
 		if not projectile: continue
 		
 		# Placement
@@ -146,7 +159,7 @@ func fire_weapon(direction: Vector2 = Vector2.RIGHT, shooter = null) -> void:
 		else:
 			get_parent().add_child(projectile)
 			
-	# State Management (Only costs 1 ammo per trigger pull, even if it shoots 5 pellets)
+	# State Management
 	current_ammo -= 1
 	can_shoot = false
 	emit_signal("ammo_changed", current_ammo, stats.magazine_size)

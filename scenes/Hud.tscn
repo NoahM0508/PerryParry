@@ -1,28 +1,128 @@
 [gd_scene format=3 uid="uid://c24ck56d4jh43"]
 
 [ext_resource type="Script" uid="uid://bs2ejrjgrgdry" path="res://PerryParry/scripts/hud.gd" id="1_ey80o"]
+[ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/BoldPixels.ttf" id="2_gaxqa"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t2dwb"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.6535996, 0, 0.14216882, 0.39607844)
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4jc07"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.20392157, 0.91764706, 0.8156863, 0.49019608)
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0j781"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.8, 0.8, 0, 1)
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="CanvasLayer" type="CanvasLayer" unique_id=1991628657]
 script = ExtResource("1_ey80o")
-player_node_path = null
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=301964822]
-anchors_preset = -1
-anchor_top = 0.87500006
-anchor_right = 0.194
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1825262768]
+anchors_preset = 2
+anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -6.1035156e-05
-offset_right = -0.4880066
+offset_left = 16.0
+offset_top = -151.0
+offset_right = 126.0
+offset_bottom = -31.0
 grow_vertical = 0
+scale = Vector2(1.565, 1.565)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1863816006]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1225172617]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Health Panel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1179154285]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_t2dwb")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/Health Panel" unique_id=1564803369]
 layout_mode = 2
 
-[node name="HealthBar" type="ProgressBar" parent="MarginContainer/VBoxContainer" unique_id=1247778598]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Health Panel/MarginContainer" unique_id=1988284632]
+layout_mode = 2
+alignment = 2
+
+[node name="HealthBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/Health Panel/MarginContainer/VBoxContainer" unique_id=1818669603]
+layout_mode = 2
+size_flags_stretch_ratio = 0.0
+
+[node name="HealthLabel" type="Label" parent="MarginContainer/VBoxContainer/Health Panel/MarginContainer/VBoxContainer/HealthBar" unique_id=145806170]
+layout_mode = 0
+offset_left = 49.0
+offset_top = -18.0
+offset_right = 102.348236
+offset_bottom = -4.0
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_gaxqa")
+
+[node name="WeaponPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1246911333]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4jc07")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/WeaponPanel" unique_id=1967579234]
 layout_mode = 2
 
-[node name="WeaponLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=2123642928]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/WeaponPanel/MarginContainer" unique_id=1996055470]
 layout_mode = 2
 
-[node name="AmmoLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1819617862]
+[node name="WeaponIconPanel" type="Panel" parent="MarginContainer/VBoxContainer/WeaponPanel/MarginContainer/HBoxContainer" unique_id=1766332790]
 layout_mode = 2
+
+[node name="WeaponSprite" type="TextureRect" parent="MarginContainer/VBoxContainer/WeaponPanel/MarginContainer/HBoxContainer" unique_id=800080444]
+layout_mode = 2
+expand_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/WeaponPanel/MarginContainer/HBoxContainer" unique_id=1535542815]
+layout_mode = 2
+alignment = 1
+
+[node name="WeaponName" type="Label" parent="MarginContainer/VBoxContainer/WeaponPanel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1900275015]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_gaxqa")
+
+[node name="Ammo Panel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=2144999662]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0j781")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/Ammo Panel" unique_id=1838123465]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Ammo Panel/MarginContainer" unique_id=1369082759]
+layout_mode = 2
+
+[node name="AmmoIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/Ammo Panel/MarginContainer/HBoxContainer" unique_id=1766031617]
+layout_mode = 2
+expand_mode = 2
+
+[node name="AmmoLabel" type="Label" parent="MarginContainer/VBoxContainer/Ammo Panel/MarginContainer/HBoxContainer" unique_id=1161593914]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_gaxqa")

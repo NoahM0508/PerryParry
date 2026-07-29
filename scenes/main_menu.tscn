@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://c0lv5p1o1uffx"]
+
+[ext_resource type="Script" uid="uid://cw8eqaaeexg5" path="res://PerryParry/scripts/main_menu.gd" id="1_cu2ow"]
+[ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/BoldPixels.ttf" id="2_rssxq"]
+
+[node name="Main Menu" type="Control" unique_id=634458067]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cu2ow")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=292234272]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(4.110854, 3.2174795)
+color = Color(0.26657534, 0.26657513, 0.2665752, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1834856205]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -129.0
+offset_top = -50.0
+offset_right = 156.625
+offset_bottom = 85.369995
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="StartButton" type="Button" parent="VBoxContainer" unique_id=246256970]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_rssxq")
+text = "Start"
+icon_alignment = 1
+
+[node name="OptionsButton" type="Button" parent="VBoxContainer" unique_id=449346509]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_rssxq")
+text = "Options"
+
+[node name="QuitButton" type="Button" parent="VBoxContainer" unique_id=258147778]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_rssxq")
+text = "Quit"
+
+[node name="OptionsMenu" type="Control" parent="." unique_id=463788122]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="OptionsMenu" unique_id=244661741]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.07497903, 1.4198572e-06, 0.40693584, 1)
+
+[connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/OptionsButton" to="." method="_on_options_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]

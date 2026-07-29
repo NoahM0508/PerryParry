@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 @export_category("Weapon System")
 @export var master_weapon_scene: PackedScene
-@export var starting_weapon_stats: Resource # This will hold your starter_pistol.tres
+@export var starting_weapon_stats: Resource 
 
 @export_category("Movement Stats")
 @export var move_speed: float = 180.0
@@ -16,6 +16,16 @@ extends CharacterBody2D
 @export var fire_action: String = "shoot"
 @export var reload_action: String = "reload"
 
+@export_category("Spawners")
+@export var floor_weapon_scene: PackedScene 
+
+@export_category("Parry Settings")
+@export var parry_duration: float = 0.9  # How long the active parry frames last
+@export var parry_cooldown: float = 0.1  # How long until you can parry again
+
+@onready var parry_hitbox: Area2D = $ParryHitbox
+@onready var dash_particles = $DashParticles2D
+
 signal health_changed(current: int, max: int)
 signal inventory_changed()
 signal ammo_changed(current: int, max: int)
@@ -27,6 +37,9 @@ var dash_cooldown_timer: float = 0.0
 var invincibility_timer: float = 0.0
 var is_dashing: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
+var current_xp: int = 0
+var is_parrying: bool = false
+var parry_cooldown_timer: float = 0.0
 
 var inventory: Array = [null, null]
 var active_weapon_index: int = 0
@@ -42,7 +55,7 @@ func _ready() -> void:
 		inventory[0] = w
 		active_weapon_index = 0
 		
-		# Connect weapon ammo/reload signals to re-emit for UI (Godot 4 Syntax)
+		# Connect weapon ammo/reload signals to re-emit for UI 
 		if w.has_signal("ammo_changed"):
 			w.ammo_changed.connect(_on_weapon_ammo_changed)
 		if w.has_signal("reload_finished"):
@@ -68,6 +81,9 @@ func _physics_process(delta: float) -> void:
 		invincibility_timer -= delta
 		if invincibility_timer <= 0.0:
 			modulate.a = 1.0
+		dash_particles.emitting = is_dashing
+	if parry_cooldown_timer > 0.0:
+		parry_cooldown_timer -= delta
 
 	# Movement Logic
 	var input_direction: Vector2 = Vector2(
@@ -79,7 +95,7 @@ func _physics_process(delta: float) -> void:
 		last_direction = input_direction
 
 	# Dash Input
-	var dash_pressed: bool = Input.is_action_just_pressed("L_Shift") or Input.is_action_just_pressed("ui_accept")
+	var dash_pressed: bool = Input.is_action_just_pressed("L_Shift")
 	if dash_pressed and dash_cooldown_timer <= 0.0:
 		if input_direction.length_squared() > 0.0:
 			start_dash(input_direction)
@@ -135,18 +151,30 @@ func die() -> void:
 	print("Player died")
 	queue_free()
 
-func pick_up_weapon(weapon) -> bool:
+func pick_up_weapon(weapon_stats: Resource) -> bool:
 	for i in range(inventory.size()):
 		if inventory[i] == null:
-			inventory[i] = weapon
+			var new_weapon = null
+			if master_weapon_scene:
+				new_weapon = master_weapon_scene.instantiate()
+				new_weapon.stats = weapon_stats
+				add_child(new_weapon)
+			else:
+				new_weapon = weapon_stats
+			
+			inventory[i] = new_weapon
 			active_weapon_index = i
-			# Connect signals using clean Godot 4 syntax
-			if weapon.has_signal("ammo_changed") and not weapon.ammo_changed.is_connected(_on_weapon_ammo_changed):
-				weapon.ammo_changed.connect(_on_weapon_ammo_changed)
-			if weapon.has_signal("reload_finished") and not weapon.reload_finished.is_connected(_on_weapon_reload_finished):
-				weapon.reload_finished.connect(_on_weapon_reload_finished)
+			
+			if new_weapon is Node and new_weapon.has_signal("ammo_changed") and not new_weapon.ammo_changed.is_connected(_on_weapon_ammo_changed):
+				new_weapon.ammo_changed.connect(_on_weapon_ammo_changed)
+			if new_weapon is Node and new_weapon.has_signal("reload_finished") and not new_weapon.reload_finished.is_connected(_on_weapon_reload_finished):
+				new_weapon.reload_finished.connect(_on_weapon_reload_finished)
+			
 			emit_signal("inventory_changed")
+			print("Equipped new weapon!")
 			return true
+	
+	print("Inventory is full!")
 	return false
 
 func _on_weapon_ammo_changed(current: int, max: int) -> void:
@@ -185,3 +213,74 @@ func get_active_weapon():
 	if active_weapon_index >= 0 and active_weapon_index < inventory.size():
 		return inventory[active_weapon_index]
 	return null
+
+func _unhandled_input(_event: InputEvent) -> void:
+	if Input.is_action_pressed("Space") and parry_cooldown_timer <= 0.0 and not is_dashing:
+		execute_parry()
+	if Input.is_action_just_pressed("Q"):
+		drop_active_weapon()
+	elif Input.is_action_just_pressed("E"):
+		var swap_index: int = 1 if active_weapon_index == 0 else 0
+		if inventory[swap_index] != null:
+			equip_weapon(swap_index)
+
+func drop_active_weapon() -> void:
+	var active_weapon = inventory[active_weapon_index]
+	
+	if active_weapon != null:
+		# Spawn the floor weapon scene
+		var drop = floor_weapon_scene.instantiate()
+		drop.global_position = global_position
+		
+		# THE FIX: Check if the inventory item is a Node, and extract its stats!
+		if active_weapon is Node2D and "stats" in active_weapon:
+			drop.stats = active_weapon.stats
+		else:
+			# Fallback in case your inventory is holding the raw Resource
+			drop.stats = active_weapon
+			
+		get_tree().current_scene.add_child(drop)
+		
+		# Clear the slot in our inventory
+		inventory[active_weapon_index] = null
+		
+		# If your active_weapon is a Node that stays in the tree, you might want to hide it
+		if active_weapon is Node2D:
+			active_weapon.hide() # Hides the gun visually since you dropped it
+			
+		emit_signal("inventory_changed")
+		print("Dropped weapon!")
+
+func execute_parry() -> void:
+	is_parrying = true
+	parry_cooldown_timer = parry_cooldown
+	
+	# Turn on the hitbox
+	parry_hitbox.set_deferred("monitoring", true)
+	
+	
+	# Visual cue (turns Perry briefly blue/cyan so you know it's active)
+	modulate = Color(0.806, 0.102, 0.0, 1.0) 
+	
+	# Wait for the active frames to finish
+	await get_tree().create_timer(parry_duration).timeout
+
+	# Turn off the hitbox and return color to normal
+	parry_hitbox.set_deferred("monitoring", false)
+	is_parrying = false
+	modulate = Color(1.0, 1.0, 1.0)
+
+func gain_xp(amount: int) -> void:
+	current_xp += amount
+	print("Gained XP! Total: ", current_xp)
+	# We will build out the level-up logic later!
+
+
+func _on_parry_hitbox_area_entered(area: Area2D) -> void:
+	# Check if the object entering our hitbox has our new parry function
+	if area.has_method("get_parried"):
+		# Make sure we don't parry our own bullets as they spawn!
+		if area.shooter != self:
+			print("Parry successful!")
+			$"ParryHitbox/ParrySparks".restart()
+			area.get_parried(self)

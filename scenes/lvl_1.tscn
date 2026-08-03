@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://57geme2050pk" path="res://PerryParry/scenes/frogEnemy.tscn" id="3_2t4kq"]
 [ext_resource type="PackedScene" uid="uid://c24ck56d4jh43" path="res://PerryParry/scenes/Hud.tscn" id="5_1eg6m"]
 [ext_resource type="PackedScene" uid="uid://bpy8vtqt0wkqb" path="res://PerryParry/scenes/pause_menu.tscn" id="5_hkysi"]
+[ext_resource type="PackedScene" uid="uid://bkj2jae3w5n75" path="res://PerryParry/scenes/test_dummy.tscn" id="6_hkysi"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2t4kq"]
 texture = ExtResource("1_qaxwf")
@@ -191,4 +192,17 @@ visible = false
 position = Vector2(-236, -122)
 
 [node name="Frog" parent="Enemies" unique_id=1022986921 instance=ExtResource("3_2t4kq")]
-position = Vector2(-238, 94)
+position = Vector2(-261, 121)
+
+[node name="Frog3" parent="Enemies" unique_id=206560364 instance=ExtResource("3_2t4kq")]
+position = Vector2(193, 68)
+
+[node name="Frog4" parent="Enemies" unique_id=33320739 instance=ExtResource("3_2t4kq")]
+position = Vector2(225, -52)
+
+[node name="Frog5" parent="Enemies" unique_id=621701410 instance=ExtResource("3_2t4kq")]
+position = Vector2(7, -132)
+
+[node name="TestDummy" parent="." unique_id=150024828 instance=ExtResource("6_hkysi")]
+position = Vector2(261, -157)
+scale = Vector2(0.325, 0.325)

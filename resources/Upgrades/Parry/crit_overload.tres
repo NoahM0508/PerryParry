@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://byh8dyg1om0p6"]
+
+[ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_hb7sp"]
+
+[resource]
+script = ExtResource("1_hb7sp")
+id = "crit_overload"
+title = "Crit Overload"
+description = "Grants a 50% critical hit chance for 1 seconds immediately following a successful parry."
+type = 1
+stat_name = "crit_overload"
+metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

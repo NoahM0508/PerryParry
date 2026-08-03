@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://vrn0yab1rj72"]
+
+[ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_h5mmq"]
+
+[resource]
+script = ExtResource("1_h5mmq")
+id = "bullet_dup"
+title = "Bullet Duplication"
+description = "Fires additional copies of the parried bullet in a spread pattern."
+type = 1
+stat_name = "duplication_count"
+metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

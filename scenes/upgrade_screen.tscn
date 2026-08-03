@@ -1,0 +1,138 @@
+[gd_scene format=3 uid="uid://cato0egs2gyl5"]
+
+[ext_resource type="Script" uid="uid://50nawlb672ij" path="res://PerryParry/scripts/upgrade_screen.gd" id="1_3cnt7"]
+[ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/BoldPixels.ttf" id="2_cy4gn"]
+
+[sub_resource type="Animation" id="Animation_84b3w"]
+resource_name = "Open"
+length = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(0, 0, 0, 0.29411766)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ColorRect/CenterContainer:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0.9, 0.9), Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ColorRect/CenterContainer:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(71, 24), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_y2gxj"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect/CenterContainer:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ColorRect/CenterContainer:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ColorRect:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 0.29411766)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ytcsi"]
+_data = {
+&"Open": SubResource("Animation_84b3w"),
+&"RESET": SubResource("Animation_y2gxj")
+}
+
+[node name="UpgradeScreen" type="CanvasLayer" unique_id=803896741]
+process_mode = 3
+script = ExtResource("1_3cnt7")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=872394724]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.29411766)
+
+[node name="CenterContainer" type="CenterContainer" parent="ColorRect" unique_id=649143401]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 71.0
+offset_top = 24.0
+offset_right = 71.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect/CenterContainer" unique_id=542970225]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="Title" type="Label" parent="ColorRect/CenterContainer/VBoxContainer" unique_id=269158169]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_cy4gn")
+text = "LEVEL UP"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="ColorRect/CenterContainer/VBoxContainer" unique_id=2117822097]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_cy4gn")
+text = "Choose One Upgrade"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CardContainer" type="HBoxContainer" parent="ColorRect/CenterContainer/VBoxContainer" unique_id=260963583]
+layout_mode = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1081639858]
+libraries/ = SubResource("AnimationLibrary_ytcsi")

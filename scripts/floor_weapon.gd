@@ -24,7 +24,7 @@ func _process(_delta: float) -> void:
 	if not is_player_near or player_ref == null:
 		return
 
-	var pickup_pressed := Input.is_action_just_pressed("E") or Input.is_action_just_pressed("e")
+	var pickup_pressed := Input.is_action_just_pressed("E")
 	if pickup_pressed and player_ref.has_method("pick_up_weapon"):
 		var success = player_ref.pick_up_weapon(stats)
 		if success:

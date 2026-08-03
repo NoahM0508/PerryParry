@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://cyj3hy1lh5tmt"]
+
+[ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_8s6uw"]
+
+[resource]
+script = ExtResource("1_8s6uw")
+id = "evasion"
+title = "Evasion"
+description = "Gives a percentage chance to completely dodge an enemy attack."
+stat_name = "evasion"
+increase_amount = 2.5
+metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

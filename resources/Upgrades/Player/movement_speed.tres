@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://bbxo5gr7qdemi"]
+
+[ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_02uqw"]
+
+[resource]
+script = ExtResource("1_02uqw")
+id = "movement_speed"
+title = "Movement Speed"
+description = "Increases the players movement speed to dodge incoming fire."
+stat_name = "movement_speed"
+increase_amount = 1.1
+metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

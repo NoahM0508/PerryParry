@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://b3vwtw2s8khby"]
+
+[ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_ll4cf"]
+
+[resource]
+script = ExtResource("1_ll4cf")
+id = "explosive_ret"
+title = "Explosive Retaliation"
+description = "Triggers a fiery explosion on the parried enemy, damaging tight clusters of foes."
+type = 1
+stat_name = "explosive"
+increase_amount = 2.0
+metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

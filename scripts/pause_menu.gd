@@ -8,6 +8,18 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("pause"):
 		toggle_pause()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause"):
+		# Assuming your upgrade screen is added to a CanvasLayer group or you have a reference to it
+		var upgrade_screen = get_tree().get_first_node_in_group("UpgradeScreen")
+		
+		# If the upgrade screen exists and is currently visible, IGNORE the pause button!
+		if upgrade_screen and upgrade_screen.visible:
+			return 
+			
+		# Otherwise, run your normal pause menu logic here...
+		toggle_pause()
+
 func toggle_pause() -> void:
 	# Flip the paused state
 	var is_paused = not get_tree().paused

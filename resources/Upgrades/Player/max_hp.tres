@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://cfyyg6im6yocq"]
+
+[ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_fg8dq"]
+
+[resource]
+script = ExtResource("1_fg8dq")
+id = "max_hp"
+title = "Max HP Boost"
+description = "Increases your total health pool to survive large waves of enemies."
+stat_name = "max_hp"
+increase_amount = 10.0
+metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

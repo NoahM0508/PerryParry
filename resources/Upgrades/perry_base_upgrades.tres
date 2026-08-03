@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="PlayerUpgrades" format=3 uid="uid://dc4alxl242jyu"]
+
+[ext_resource type="Script" uid="uid://cr3xaj5k1grod" path="res://PerryParry/scripts/player_upgrades.gd" id="1_8vmo5"]
+
+[resource]
+script = ExtResource("1_8vmo5")
+metadata/_custom_type_script = "uid://cr3xaj5k1grod"

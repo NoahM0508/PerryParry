@@ -43,8 +43,8 @@ func get_parried(new_shooter: Node) -> void:
 	shooter = new_shooter
 	
 	# Reverse the travel direction
-	direction = -direction
+	#direction = -direction
 	
 	# Optional Polish: Make the deflected bullet faster and deadlier!
-	speed += 200.0 
-	damage *= 2
+	#speed += 200.0 
+	#damage *= 2

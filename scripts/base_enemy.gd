@@ -315,14 +315,14 @@ func take_damage(amount: int) -> void:
 		# If we get shot while idling or healing, fight back!
 		change_state(State.CHASE)
 
-func die() -> void:
-	current_health = 0
+func die():
 	change_state(State.DEAD)
 	
 	if xp_shard_scene:
 		var shard = xp_shard_scene.instantiate()
 		shard.global_position = global_position
-		get_tree().current_scene.add_child(shard)
+		# FIX: Use call_deferred so we don't interrupt the physics engine!
+		get_tree().current_scene.call_deferred("add_child", shard)
 		
 	if floor_weapon_scene and weapon != null:
 		if randf() <= drop_chance:

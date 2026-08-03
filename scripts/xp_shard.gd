@@ -1,6 +1,6 @@
 extends Area2D
 
-@export var xp_amount: int = 10
+@export var xp_amount: int = 100
 @export var magnet_range: float = 50.0
 @export var move_speed: float = 400.0
 

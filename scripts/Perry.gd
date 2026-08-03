@@ -15,6 +15,7 @@ extends CharacterBody2D
 @export var invincibility_duration: float = 0.35
 @export var fire_action: String = "shoot"
 @export var reload_action: String = "reload"
+@export var player_upgrades: PlayerUpgrades
 
 @export_category("Spawners")
 @export var floor_weapon_scene: PackedScene 
@@ -26,10 +27,13 @@ extends CharacterBody2D
 @onready var parry_hitbox: Area2D = $ParryHitbox
 @onready var dash_particles = $DashParticles2D
 
+const upgrade_screen = preload("res://PerryParry/scenes/upgrade_screen.tscn")
+
 signal health_changed(current: int, max: int)
 signal inventory_changed()
 signal ammo_changed(current: int, max: int)
 signal weapon_reloaded(slot_index: int)
+signal xp_changed(current, required, level)
 
 var health: int = max_health
 var dash_timer: float = 0.0
@@ -37,7 +41,12 @@ var dash_cooldown_timer: float = 0.0
 var invincibility_timer: float = 0.0
 var is_dashing: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
+var player_level: int = 1
 var current_xp: int = 0
+var xp_to_next_level: int = 100
+var parry_level: int = 1
+var current_parry_xp: int = 0
+var parry_xp_to_next: int = 10
 var is_parrying: bool = false
 var parry_cooldown_timer: float = 0.0
 
@@ -208,6 +217,7 @@ func swap_weapon_slots() -> void:
 	inventory[0] = inventory[1]
 	inventory[1] = tmp
 	active_weapon_index = 1 if active_weapon_index == 0 else 0
+	equip_weapon(active_weapon_index)
 
 func get_active_weapon():
 	if active_weapon_index >= 0 and active_weapon_index < inventory.size():
@@ -246,7 +256,7 @@ func drop_active_weapon() -> void:
 		
 		# If your active_weapon is a Node that stays in the tree, you might want to hide it
 		if active_weapon is Node2D:
-			active_weapon.hide() # Hides the gun visually since you dropped it
+			active_weapon.queue_free() # Hides the gun visually since you dropped it
 			
 		emit_signal("inventory_changed")
 		print("Dropped weapon!")
@@ -272,9 +282,49 @@ func execute_parry() -> void:
 
 func gain_xp(amount: int) -> void:
 	current_xp += amount
-	print("Gained XP! Total: ", current_xp)
-	# We will build out the level-up logic later!
 
+	print("XP: %d / %d" % [current_xp, xp_to_next_level])
+
+	while current_xp >= xp_to_next_level:
+		level_up()
+	
+	emit_signal(
+	"xp_changed",
+	current_xp,
+	xp_to_next_level,
+	player_level
+	)
+
+func level_up() -> void:
+
+	player_level += 1
+
+	current_xp -= xp_to_next_level
+
+	xp_to_next_level = int(xp_to_next_level * 1.35)
+
+	print("----------------")
+	print("LEVEL UP!")
+	print("Level:", player_level)
+	print("Next XP:", xp_to_next_level)
+
+	get_tree().paused = true
+
+	var screen = upgrade_screen.instantiate()
+	get_tree().current_scene.add_child(screen)
+
+	screen.open_upgrade_screen(player_upgrades)
+
+	await screen.upgrade_selected
+
+	get_tree().paused = false
+
+func parry_level_up() -> void:
+	parry_level += 1
+	current_parry_xp -= parry_xp_to_next
+	parry_xp_to_next = int(parry_xp_to_next * 1.3)
+	
+	upgrade_screen.open_upgrade_screen(player_upgrades)
 
 func _on_parry_hitbox_area_entered(area: Area2D) -> void:
 	# Check if the object entering our hitbox has our new parry function
@@ -283,4 +333,31 @@ func _on_parry_hitbox_area_entered(area: Area2D) -> void:
 		if area.shooter != self:
 			print("Parry successful!")
 			$"ParryHitbox/ParrySparks".restart()
+			
+			# 1. Apply our new inaccurate deflection math!
+			deflect_projectile(area)
+			
+			# 2. Trigger the bullet's internal parry logic (if it has visual changes/timers)
 			area.get_parried(self)
+
+# Put the new function right below it!
+func deflect_projectile(bullet: Area2D) -> void:
+	# Check to ensure upgrades are loaded so the game doesn't crash
+	if player_upgrades == null:
+		printerr("Parry Math Failed: Player Upgrades resource not slotted in Inspector!")
+		return
+		
+	# 1. Calculate the maximum possible spread based on the current level
+	var current_spread: float = max(0.0, 60.0 - (player_upgrades.get_upgrade_level("parry_accuracy", UpgradeData.UpgradeType.CORE) * 6.0))
+	
+	# 2. Pick a random angle between the negative and positive spread limits
+	var random_angle_degrees: float = randf_range(-current_spread, current_spread)
+	
+	# 3. Convert degrees to radians (Godot's vector math requires radians)
+	var random_angle_radians: float = deg_to_rad(random_angle_degrees)
+	
+	# 4. Reverse the bullet's direction, then apply the randomized inaccuracy
+	bullet.direction = (bullet.direction * -1).rotated(random_angle_radians)
+	
+	# 5. Assign the player as the new shooter so it damages enemies!
+	bullet.shooter = self

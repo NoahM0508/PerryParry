@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://bkj2jae3w5n75"]
+
+[ext_resource type="Script" uid="uid://btc7r4dgpd0yd" path="res://PerryParry/scripts/test_dummy.gd" id="1_a8no1"]
+[ext_resource type="Texture2D" uid="uid://tiys7a1t3n67" path="res://PerryParry/assets/dummy.png" id="2_tgc5u"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_t2dwb"]
+radius = 25.0
+height = 108.0
+
+[node name="TestDummy" type="StaticBody2D" unique_id=150024828]
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("1_a8no1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1782637209]
+shape = SubResource("CapsuleShape2D_t2dwb")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1676247422]
+scale = Vector2(0.495, 0.495)
+texture = ExtResource("2_tgc5u")
+
+[node name="DamageLabel" type="Label" parent="." unique_id=2114814479]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="HitTimer" type="Timer" parent="." unique_id=1007125138]

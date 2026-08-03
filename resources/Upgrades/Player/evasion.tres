@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://cyj3hy1lh5tmt"]
 
+[ext_resource type="Texture2D" uid="uid://b5mh77lkv8gat" path="res://PerryParry/assets/Icons/Evasion.png" id="1_7eb2x"]
 [ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_8s6uw"]
 
 [resource]
@@ -7,6 +8,7 @@ script = ExtResource("1_8s6uw")
 id = "evasion"
 title = "Evasion"
 description = "Gives a percentage chance to completely dodge an enemy attack."
+icon = ExtResource("1_7eb2x")
 stat_name = "evasion"
 increase_amount = 2.5
 metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

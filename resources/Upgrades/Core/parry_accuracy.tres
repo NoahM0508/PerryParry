@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://1yjdc8juoac4"]
 
+[ext_resource type="Texture2D" uid="uid://rglfbihs412h" path="res://PerryParry/assets/Icons/ParryIcon.png" id="1_erefd"]
 [ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_kq4oi"]
 
 [resource]
@@ -8,6 +9,7 @@ id = "parry_accuracy"
 title = "Parry Accuracy"
 description = "Decreases the 60-degree deflection cone. At level 10, parries are perfectly straight!"
 type = 1
+icon = ExtResource("1_erefd")
 max_level = 10
 stat_name = "parry_accuracy"
 metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

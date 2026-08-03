@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ci2cu771uwvie"]
 
 [ext_resource type="Script" uid="uid://kmdbdaagyf7o" path="res://PerryParry/scripts/xp_shard.gd" id="1_qox84"]
-[ext_resource type="Texture2D" uid="uid://neb82ib6m15" path="res://PerryParry/assets/tiles/pebble2.png" id="2_xgl8j"]
+[ext_resource type="Texture2D" uid="uid://neb82ib6m15" path="res://PerryParry/assets/tiles/Outside/pebble2.png" id="2_xgl8j"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t2dwb"]
 size = Vector2(4, 4)

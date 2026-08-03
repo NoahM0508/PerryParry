@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://c7o1rq2tvi2f1"]
 
-[ext_resource type="Texture2D" uid="uid://dfpk7beuqhlak" path="res://PerryParry/assets/tiles/Tile.png" id="1_qaxwf"]
+[ext_resource type="Texture2D" uid="uid://dfpk7beuqhlak" path="res://PerryParry/assets/tiles/Outside/Tile.png" id="1_qaxwf"]
 [ext_resource type="PackedScene" uid="uid://cra074shg8hv" path="res://PerryParry/scenes/Perry.tscn" id="2_2t4kq"]
-[ext_resource type="Texture2D" uid="uid://kjcwb424euxw" path="res://PerryParry/assets/tiles/bOX_1_1.png" id="2_tq020"]
+[ext_resource type="Texture2D" uid="uid://kjcwb424euxw" path="res://PerryParry/assets/tiles/Outside/bOX_1_1.png" id="2_tq020"]
 [ext_resource type="PackedScene" uid="uid://57geme2050pk" path="res://PerryParry/scenes/frogEnemy.tscn" id="3_2t4kq"]
 [ext_resource type="PackedScene" uid="uid://c24ck56d4jh43" path="res://PerryParry/scenes/Hud.tscn" id="5_1eg6m"]
 [ext_resource type="PackedScene" uid="uid://bpy8vtqt0wkqb" path="res://PerryParry/scenes/pause_menu.tscn" id="5_hkysi"]
@@ -175,7 +175,7 @@ layer_1/name = "Layer1"
 layer_1/tile_data = PackedInt32Array(-393214, 0, 6, -458733, 0, 6, -720895, 0, 6, -3, 0, 6, 262129, 0, 6, 393201, 0, 6, -458772, 0, 6, -589841, 0, 5, -458738, 0, 5, 262124, 0, 5, 393228, 0, 5, 14, 0, 5, 131078, 0, 5, 262158, 0, 5, 65551, 0, 5, 131081, 0, 5, -262148, 0, 5, -262130, 0, 5, -262129, 0, 5, -327663, 0, 5, -131067, 131072, 1, 589843, 0, 5, 720880, 0, 5, 655387, 327680, 4, 524261, 327680, 4, 589797, 327680, 4, -720923, 327680, 4, -655387, 327680, 4, -1048585, 327680, 4, -1048552, 327680, 4, -983016, 327680, 4, -1048551, 327680, 4, -983015, 327680, 4, -131045, 327680, 4, 327707, 327680, 4, 917479, 327680, 4, -262171, 327680, 4, 1048569, 327680, 4, 851976, 327680, 4, 458739, 327680, 3, -196617, 327680, 4, -458745, 327680, 2, -589837, 65536, 2, -851957, 65536, 2, -655367, 65536, 2, -262146, 65536, 2, -720885, 65536, 2, -196600, 65536, 2, 19, 65536, 2, 655347, 65536, 2, 262138, 65536, 1, 589823, 65536, 1, 262148, 65536, 1, 589818, 65536, 1, 458741, 65536, 1, 327673, 65536, 1, 655357, 65536, 1, 262142, 65536, 1, 524290, 65536, 1, 262146, 196608, 2, 393212, 131072, 1, 262145, 131072, 1, 262144, 131072, 1, 393215, 131072, 1, 393214, 131072, 1, 458749, 131072, 1, 458748, 131072, 1, 458747, 131072, 1, 524282, 131072, 1, 524281, 131072, 1, 196611, 196608, 2, 131075, 196608, 2, 65540, 196608, 2, 5, 196608, 2, -65530, 196608, 2, -131066, 196608, 2, -196601, 196608, 2, -262136, 196608, 2, -327671, 196608, 2, -393207, 196608, 2, -458742, 196608, 2, -196602, 131072, 1, -65532, 131072, 1, 3, 131072, 1, 65538, 131072, 1, 65537, 131072, 1, 131072, 131072, 1, 262143, 131072, 1, 327678, 131072, 1, 393213, 131072, 1, 327668, 1, 0, 327667, 1, 0, 327666, 1, 0, 327665, 1, 0, 327664, 1, 0, 327663, 1, 0, -65543, 1, 0, -65542, 1, 0, -65541, 1, 0, -65540, 1, 0, -65539, 1, 0, -65538, 1, 0, -65537, 1, 0, -131072, 1, 0, -131071, 1, 0, -131070, 1, 0, -131069, 1, 0, 327669, 1, 0)
 
 [node name="Perry" parent="." unique_id=242410739 instance=ExtResource("2_2t4kq")]
-position = Vector2(2, -10)
+position = Vector2(-9, 16)
 
 [node name="Camera2D" type="Camera2D" parent="Perry" unique_id=2012091004]
 zoom = Vector2(3.075, 3.075)

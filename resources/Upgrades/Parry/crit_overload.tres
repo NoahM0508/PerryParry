@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://byh8dyg1om0p6"]
 
+[ext_resource type="Texture2D" uid="uid://cbdxfstxom7b2" path="res://PerryParry/assets/Icons/CritIcon.png" id="1_ei7r0"]
 [ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_hb7sp"]
 
 [resource]
@@ -8,5 +9,6 @@ id = "crit_overload"
 title = "Crit Overload"
 description = "Grants a 50% critical hit chance for 1 seconds immediately following a successful parry."
 type = 1
+icon = ExtResource("1_ei7r0")
 stat_name = "crit_overload"
 metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

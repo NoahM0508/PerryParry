@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://dfw3wsfx1n71q"]
 
+[ext_resource type="Texture2D" uid="uid://c6l0qu0f03epn" path="res://PerryParry/assets/Icons/armor.png" id="1_0ximm"]
 [ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_gt7tw"]
 
 [resource]
@@ -7,6 +8,7 @@ script = ExtResource("1_gt7tw")
 id = "armor"
 title = "Armor "
 description = "Reduces all incoming damage by a flat amount."
+icon = ExtResource("1_0ximm")
 stat_name = "armor"
 increase_amount = 2.0
 metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

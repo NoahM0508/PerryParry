@@ -1,11 +1,13 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://buvolt7wa3x81"]
 
 [ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_m8nh2"]
+[ext_resource type="Texture2D" uid="uid://crm2pn6ujwjhq" path="res://PerryParry/assets/Icons/Lifesteal.png" id="1_xi7j4"]
 
 [resource]
 script = ExtResource("1_m8nh2")
 id = "life_steal"
 title = "Life Steal"
 description = "Restores a chunk of health only when an enemy dies."
+icon = ExtResource("1_xi7j4")
 stat_name = "life_steal"
 metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

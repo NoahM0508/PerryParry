@@ -21,11 +21,18 @@ extends CharacterBody2D
 @export var floor_weapon_scene: PackedScene 
 
 @export_category("Parry Settings")
-@export var parry_duration: float = 0.9  # How long the active parry frames last
-@export var parry_cooldown: float = 0.1  # How long until you can parry again
+@export var parry_duration: float = 0.9  
+@export var parry_cooldown: float = 0.1  
 
 @onready var parry_hitbox: Area2D = $ParryHitbox
 @onready var dash_particles = $DashParticles2D
+
+# --- ANIMATION & AUDIO NODES ---
+@onready var anim = $AnimatedSprite2D # Or $AnimationPlayer if you prefer!
+@onready var audio_dash = $Audio/DashAudio
+@onready var audio_parry = $Audio/ParryAudio
+@onready var audio_flinch = $Audio/FlinchAudio
+@onready var audio_die = $Audio/DieAudio
 
 const upgrade_screen = preload("res://PerryParry/scenes/upgrade_screen.tscn")
 
@@ -56,15 +63,13 @@ var active_weapon_index: int = 0
 func _ready() -> void:
 	health = max_health
 
-	# --- NEW MODULAR WEAPON LOADING ---
 	if master_weapon_scene and starting_weapon_stats:
 		var w = master_weapon_scene.instantiate()
-		w.stats = starting_weapon_stats # Inject the stats BEFORE it enters the tree!
+		w.stats = starting_weapon_stats 
 		add_child(w)
 		inventory[0] = w
 		active_weapon_index = 0
 		
-		# Connect weapon ammo/reload signals to re-emit for UI 
 		if w.has_signal("ammo_changed"):
 			w.ammo_changed.connect(_on_weapon_ammo_changed)
 		if w.has_signal("reload_finished"):
@@ -91,6 +96,7 @@ func _physics_process(delta: float) -> void:
 		if invincibility_timer <= 0.0:
 			modulate.a = 1.0
 		dash_particles.emitting = is_dashing
+		
 	if parry_cooldown_timer > 0.0:
 		parry_cooldown_timer -= delta
 
@@ -99,7 +105,7 @@ func _physics_process(delta: float) -> void:
 		Input.get_axis("Left", "Right"),
 		Input.get_axis("Up", "Down")
 	).normalized()
-
+	
 	if input_direction.length_squared() > 0.0:
 		last_direction = input_direction
 
@@ -118,14 +124,23 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
+	# --- ANIMATION & FACING LOGIC ---
+	if not is_dashing and not is_parrying:
+		# Face the mouse cursor
+		anim.flip_h = (get_global_mouse_position().x < global_position.x)
+		
+		# Basic movement animations
+		if velocity.length_squared() > 0:
+			anim.play("Walk")
+		else:
+			anim.play("Idle")
+
 	# --- WEAPON INPUT LOGIC ---
 	var w = get_active_weapon()
 	if w:
-		# continuous fire while holding
 		if Input.is_action_pressed("Left Click"):
 			if w.has_method("fire_weapon"):
 				w.call("fire_weapon", Vector2.ZERO, self)
-		# reload on press
 		if Input.is_action_just_pressed("Reload"):
 			if w.has_method("reload"):
 				w.call("reload")
@@ -138,18 +153,26 @@ func start_dash(direction: Vector2) -> void:
 	last_direction = direction.normalized() if direction.length_squared() > 0.0 else last_direction
 	modulate.a = 0.6
 	velocity = last_direction * dash_speed
+	
+	# Trigger dash animation and sound
+	anim.play("Dash")
+	if audio_dash: audio_dash.play()
 
 func take_damage(amount: int) -> void:
-	if invincibility_timer > 0.0:
+	if invincibility_timer > 0.0 or health <= 0:
 		return
 
 	health = max(0, health - amount)
+	
 	invincibility_timer = invincibility_duration
 	modulate.a = 0.6
 
-	if health <= 0:
+	if health > 0:
+		anim.play("Flinch")
+		if audio_flinch: audio_flinch.play()
+	else:
 		die()
-
+	
 	emit_signal("health_changed", health, max_health)
 
 func heal(amount: int) -> void:
@@ -158,6 +181,17 @@ func heal(amount: int) -> void:
 
 func die() -> void:
 	print("Player died")
+	
+	# Disable physics and inputs while dying
+	set_physics_process(false)
+	$CollisionShape2D.set_deferred("disabled", true)
+	
+	anim.play("Die")
+	if audio_die: audio_die.play()
+	
+	# Wait for the death animation to finish before deleting the player
+	# If using AnimatedSprite2D, use "animation_finished". If AnimationPlayer, use "animation_finished"
+	await anim.animation_finished 
 	queue_free()
 
 func pick_up_weapon(weapon_stats: Resource) -> bool:
@@ -205,7 +239,6 @@ func equip_weapon(index: int) -> void:
 			if w.has_signal("reload_finished") and not w.reload_finished.is_connected(_on_weapon_reload_finished):
 				w.reload_finished.connect(_on_weapon_reload_finished)
 				
-			# Emit current ammo for HUD
 			if w.has_method("get_ammo"):
 				var a = w.call("get_ammo")
 				if typeof(a) == TYPE_DICTIONARY and a.has("current") and a.has("max"):
@@ -225,7 +258,7 @@ func get_active_weapon():
 	return null
 
 func _unhandled_input(_event: InputEvent) -> void:
-	if Input.is_action_pressed("Space") and parry_cooldown_timer <= 0.0 and not is_dashing:
+	if Input.is_action_pressed("Space") and parry_cooldown_timer <= 0.0 and not is_dashing and health > 0:
 		execute_parry()
 	if Input.is_action_just_pressed("Q"):
 		drop_active_weapon()
@@ -238,25 +271,19 @@ func drop_active_weapon() -> void:
 	var active_weapon = inventory[active_weapon_index]
 	
 	if active_weapon != null:
-		# Spawn the floor weapon scene
 		var drop = floor_weapon_scene.instantiate()
 		drop.global_position = global_position
 		
-		# THE FIX: Check if the inventory item is a Node, and extract its stats!
 		if active_weapon is Node2D and "stats" in active_weapon:
 			drop.stats = active_weapon.stats
 		else:
-			# Fallback in case your inventory is holding the raw Resource
 			drop.stats = active_weapon
 			
 		get_tree().current_scene.add_child(drop)
-		
-		# Clear the slot in our inventory
 		inventory[active_weapon_index] = null
 		
-		# If your active_weapon is a Node that stays in the tree, you might want to hide it
 		if active_weapon is Node2D:
-			active_weapon.queue_free() # Hides the gun visually since you dropped it
+			active_weapon.queue_free() 
 			
 		emit_signal("inventory_changed")
 		print("Dropped weapon!")
@@ -264,100 +291,56 @@ func drop_active_weapon() -> void:
 func execute_parry() -> void:
 	is_parrying = true
 	parry_cooldown_timer = parry_cooldown
-	
-	# Turn on the hitbox
 	parry_hitbox.set_deferred("monitoring", true)
 	
+	# Trigger parry animation and sound
+	anim.play("Parry")
+	if audio_parry: audio_parry.play()
 	
-	# Visual cue (turns Perry briefly blue/cyan so you know it's active)
-	modulate = Color(0.806, 0.102, 0.0, 1.0) 
-	
-	# Wait for the active frames to finish
 	await get_tree().create_timer(parry_duration).timeout
 
-	# Turn off the hitbox and return color to normal
 	parry_hitbox.set_deferred("monitoring", false)
 	is_parrying = false
-	modulate = Color(1.0, 1.0, 1.0)
 
 func gain_xp(amount: int) -> void:
 	current_xp += amount
-
-	print("XP: %d / %d" % [current_xp, xp_to_next_level])
-
 	while current_xp >= xp_to_next_level:
 		level_up()
-	
-	emit_signal(
-	"xp_changed",
-	current_xp,
-	xp_to_next_level,
-	player_level
-	)
+	emit_signal("xp_changed", current_xp, xp_to_next_level, player_level)
 
 func level_up() -> void:
-
 	player_level += 1
-
 	current_xp -= xp_to_next_level
-
 	xp_to_next_level = int(xp_to_next_level * 1.35)
 
-	print("----------------")
-	print("LEVEL UP!")
-	print("Level:", player_level)
-	print("Next XP:", xp_to_next_level)
-
 	get_tree().paused = true
-
 	var screen = upgrade_screen.instantiate()
 	get_tree().current_scene.add_child(screen)
-
 	screen.open_upgrade_screen(player_upgrades)
-
 	await screen.upgrade_selected
-
 	get_tree().paused = false
 
 func parry_level_up() -> void:
 	parry_level += 1
 	current_parry_xp -= parry_xp_to_next
 	parry_xp_to_next = int(parry_xp_to_next * 1.3)
-	
 	upgrade_screen.open_upgrade_screen(player_upgrades)
 
 func _on_parry_hitbox_area_entered(area: Area2D) -> void:
-	# Check if the object entering our hitbox has our new parry function
 	if area.has_method("get_parried"):
-		# Make sure we don't parry our own bullets as they spawn!
 		if area.shooter != self:
-			print("Parry successful!")
 			$"ParryHitbox/ParrySparks".restart()
-			
-			# 1. Apply our new inaccurate deflection math!
 			deflect_projectile(area)
-			
-			# 2. Trigger the bullet's internal parry logic (if it has visual changes/timers)
 			area.get_parried(self)
 
-# Put the new function right below it!
 func deflect_projectile(bullet: Area2D) -> void:
-	# Check to ensure upgrades are loaded so the game doesn't crash
 	if player_upgrades == null:
 		printerr("Parry Math Failed: Player Upgrades resource not slotted in Inspector!")
 		return
 		
-	# 1. Calculate the maximum possible spread based on the current level
 	var current_spread: float = max(0.0, 60.0 - (player_upgrades.get_upgrade_level("parry_accuracy", UpgradeData.UpgradeType.CORE) * 6.0))
-	
-	# 2. Pick a random angle between the negative and positive spread limits
 	var random_angle_degrees: float = randf_range(-current_spread, current_spread)
-	
-	# 3. Convert degrees to radians (Godot's vector math requires radians)
 	var random_angle_radians: float = deg_to_rad(random_angle_degrees)
 	
-	# 4. Reverse the bullet's direction, then apply the randomized inaccuracy
 	bullet.direction = (bullet.direction * -1).rotated(random_angle_radians)
-	
-	# 5. Assign the player as the new shooter so it damages enemies!
 	bullet.shooter = self

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c64xjkaf02y3k"]
 
 [ext_resource type="Script" uid="uid://dc4mtjdts36uh" path="res://PerryParry/scripts/weapon.gd" id="1_thqm8"]
-[ext_resource type="Texture2D" uid="uid://ggfxqgj5rfng" path="res://PerryParry/assets/Reload.png" id="2_rkivl"]
+[ext_resource type="Texture2D" uid="uid://ggfxqgj5rfng" path="res://PerryParry/assets/Extra/Reload.png" id="2_rkivl"]
 
 [node name="WeaponRoot" type="Node2D" unique_id=1971519975]
 script = ExtResource("1_thqm8")

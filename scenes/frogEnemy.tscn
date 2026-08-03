@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://chvaq6g4xlia6" path="res://PerryParry/scripts/base_enemy.gd" id="1_2spja"]
 [ext_resource type="PackedScene" uid="uid://ci2cu771uwvie" path="res://PerryParry/scenes/xp_shard.tscn" id="2_6rnnk"]
-[ext_resource type="Texture2D" uid="uid://dl6xx3tey2laf" path="res://PerryParry/assets/Frog_Sheet.png" id="2_656vu"]
+[ext_resource type="Texture2D" uid="uid://dl6xx3tey2laf" path="res://PerryParry/assets/Extra/Frog_Sheet.png" id="2_656vu"]
 [ext_resource type="PackedScene" uid="uid://eavcnieyqfhu" path="res://PerryParry/scenes/floor_weapon.tscn" id="3_blqyq"]
 [ext_resource type="PackedScene" uid="uid://c64xjkaf02y3k" path="res://PerryParry/scenes/weapon.tscn" id="3_y0dmv"]
 

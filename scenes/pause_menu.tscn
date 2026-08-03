@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bpy8vtqt0wkqb"]
 
 [ext_resource type="Script" uid="uid://cdqjl4s8sq7mf" path="res://PerryParry/scripts/pause_menu.gd" id="1_gdhub"]
-[ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/BoldPixels.ttf" id="2_kixq6"]
+[ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/Extra/BoldPixels.ttf" id="2_kixq6"]
 
 [node name="PauseMenu" type="CanvasLayer" unique_id=1610623847]
 process_mode = 3

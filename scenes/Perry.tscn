@@ -2,67 +2,223 @@
 
 [ext_resource type="Script" uid="uid://bpo3llmsqsjmi" path="res://PerryParry/scripts/Perry.gd" id="1_dwos7"]
 [ext_resource type="PackedScene" uid="uid://c64xjkaf02y3k" path="res://PerryParry/scenes/weapon.tscn" id="2_dbm6c"]
-[ext_resource type="Texture2D" uid="uid://bswabao1gxgp2" path="res://PerryParry/assets/Beaver_Sheet.png" id="2_fbsvl"]
 [ext_resource type="Resource" uid="uid://b2pdhr2ghjwwd" path="res://PerryParry/resources/weapons/Epic/Epic Revolver.tres" id="3_dbm6c"]
 [ext_resource type="PackedScene" uid="uid://eavcnieyqfhu" path="res://PerryParry/scenes/floor_weapon.tscn" id="4_dbm6c"]
 [ext_resource type="Resource" uid="uid://dc4alxl242jyu" path="res://PerryParry/resources/Upgrades/perry_base_upgrades.tres" id="4_dr8nv"]
 [ext_resource type="Texture2D" uid="uid://8n8tbu0hup2h" path="res://PerryParry/assets/brackeys_vfx_bundle/particles/alpha/magic_03_a.png" id="6_dkvs5"]
-[ext_resource type="Texture2D" uid="uid://b3qihbf0e0x2c" path="res://PerryParry/assets/brackeys_vfx_bundle/particles/alpha/smoke_03_a.png" id="6_jsvmq"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ei6vn"]
-atlas = ExtResource("2_fbsvl")
-region = Rect2(0, 0, 64, 97)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mxjr3"]
-atlas = ExtResource("2_fbsvl")
-region = Rect2(128, 0, 64, 97)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vll63"]
-atlas = ExtResource("2_fbsvl")
-region = Rect2(256, 0, 64, 97)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_olmil"]
-atlas = ExtResource("2_fbsvl")
-region = Rect2(384, 0, 64, 97)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_t2dwb"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ei6vn")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_mxjr3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vll63")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_olmil")
-}],
-"loop": 1,
-"name": &"default",
-"speed": 5.0
-}]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_m2va7"]
-size = Vector2(22, 10)
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_t2dwb"]
-radius = 21.095022
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_enjla"]
-particle_flag_disable_z = true
-gravity = Vector3(0, 0, 0)
-scale_min = 0.08
-scale_max = 0.08
+[ext_resource type="Texture2D" uid="uid://cib0ear4tj7x0" path="res://PerryParry/assets/Perry/Perry_Idle.png" id="6_dr8nv"]
+[ext_resource type="Texture2D" uid="uid://c2ls5cnnjdyn0" path="res://PerryParry/assets/brackeys_vfx_bundle/DashParts2.png" id="6_llf1a"]
+[ext_resource type="Texture2D" uid="uid://3tnuayl1s16s" path="res://PerryParry/assets/Perry/Perry_Dash.png" id="6_v2kgp"]
+[ext_resource type="Texture2D" uid="uid://b3m7wsqohgigi" path="res://PerryParry/assets/Perry/PerryDeath.png" id="7_llf1a"]
+[ext_resource type="Texture2D" uid="uid://dr1weet5b0cfe" path="res://PerryParry/assets/Perry/Perry_walkingAttack.png" id="7_r04fq"]
+[ext_resource type="Texture2D" uid="uid://b24lpuvr1cete" path="res://PerryParry/assets/Perry/Perry_Flinch.png" id="8_r04fq"]
+[ext_resource type="Texture2D" uid="uid://d4coogqq007qs" path="res://PerryParry/assets/Perry/Perry_Parry.png" id="10_pc50g"]
+[ext_resource type="Texture2D" uid="uid://dixex381qp7vh" path="res://PerryParry/assets/Perry/Perry_Walk.png" id="11_wkyyn"]
+[ext_resource type="AudioStream" uid="uid://cxubuvindjent" path="res://PerryParry/assets/audio/player/hurt.mp3" id="15_r04fq"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_uhjpm"]
 particle_flag_disable_z = true
 inherit_velocity_ratio = 0.135
 spread = 106.875
 gravity = Vector3(0, 0, 0)
-scale_min = 0.07
+scale_min = 0.5
+scale_max = 0.5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pc50g"]
+atlas = ExtResource("7_r04fq")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wkyyn"]
+atlas = ExtResource("7_r04fq")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eeavq"]
+atlas = ExtResource("7_r04fq")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y3843"]
+atlas = ExtResource("7_r04fq")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y5fos"]
+atlas = ExtResource("6_v2kgp")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2hnwn"]
+atlas = ExtResource("7_llf1a")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rmwfb"]
+atlas = ExtResource("7_llf1a")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_up5sf"]
+atlas = ExtResource("7_llf1a")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bly2f"]
+atlas = ExtResource("7_llf1a")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ltm6"]
+atlas = ExtResource("8_r04fq")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ymt1e"]
+atlas = ExtResource("6_dr8nv")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ck8v5"]
+atlas = ExtResource("6_dr8nv")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8utqp"]
+atlas = ExtResource("6_dr8nv")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v2kgp"]
+atlas = ExtResource("6_dr8nv")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3emqd"]
+atlas = ExtResource("10_pc50g")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v7rhm"]
+atlas = ExtResource("10_pc50g")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_87woi"]
+atlas = ExtResource("10_pc50g")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eig2j"]
+atlas = ExtResource("11_wkyyn")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_clmp3"]
+atlas = ExtResource("11_wkyyn")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dy8ov"]
+atlas = ExtResource("11_wkyyn")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ucltn"]
+atlas = ExtResource("11_wkyyn")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_t2dwb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pc50g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wkyyn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eeavq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y3843")
+}],
+"loop": 1,
+"name": &"Attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y5fos")
+}],
+"loop": 1,
+"name": &"Dash",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2hnwn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rmwfb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_up5sf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bly2f")
+}],
+"loop": 1,
+"name": &"Die",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1ltm6")
+}],
+"loop": 0,
+"name": &"Flinch",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ymt1e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ck8v5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8utqp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v2kgp")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3emqd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v7rhm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_87woi")
+}],
+"loop": 2,
+"name": &"Parry",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eig2j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_clmp3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dy8ov")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ucltn")
+}],
+"loop": 1,
+"name": &"Walk",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2tv5g"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bgvc2"]
+radius = 16.0
+height = 50.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_enjla"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 0, 0)
+scale_min = 0.08
 scale_max = 0.08
 
 [node name="Perry" type="CharacterBody2D" unique_id=242410739 groups=["Player"]]
@@ -74,22 +230,33 @@ starting_weapon_stats = ExtResource("3_dbm6c")
 player_upgrades = ExtResource("4_dr8nv")
 floor_weapon_scene = ExtResource("4_dbm6c")
 
+[node name="DashParticles2D" type="GPUParticles2D" parent="." unique_id=1560606566]
+position = Vector2(-12, -1.9999999)
+scale = Vector2(0.55968267, 0.45754567)
+emitting = false
+amount = 10
+texture = ExtResource("6_llf1a")
+lifetime = 0.5
+process_material = SubResource("ParticleProcessMaterial_uhjpm")
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=744052195]
 position = Vector2(-3, -5)
+scale = Vector2(0.35, 0.35)
 sprite_frames = SubResource("SpriteFrames_t2dwb")
-autoplay = "default"
-frame_progress = 0.6664585
+animation = &"Flinch"
+autoplay = "Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=135091308]
-position = Vector2(0, -1)
-shape = SubResource("RectangleShape2D_m2va7")
+position = Vector2(-4, -6)
+shape = SubResource("CapsuleShape2D_2tv5g")
 
 [node name="ParryHitbox" type="Area2D" parent="." unique_id=962733]
 monitoring = false
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ParryHitbox" unique_id=1795339607]
-shape = SubResource("CircleShape2D_t2dwb")
+position = Vector2(-10, -5)
+shape = SubResource("CapsuleShape2D_bgvc2")
 
 [node name="ParrySparks" type="GPUParticles2D" parent="ParryHitbox" unique_id=1755744217]
 emitting = false
@@ -100,13 +267,16 @@ one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_enjla")
 
-[node name="DashParticles2D" type="GPUParticles2D" parent="." unique_id=1560606566]
-position = Vector2(-12, -1.9999999)
-scale = Vector2(0.55968267, 0.45754567)
-emitting = false
-amount = 10
-texture = ExtResource("6_jsvmq")
-lifetime = 0.5
-process_material = SubResource("ParticleProcessMaterial_uhjpm")
+[node name="Audio" type="Node2D" parent="." unique_id=456234813]
+
+[node name="FlinchAudio" type="AudioStreamPlayer2D" parent="Audio" unique_id=1639985838]
+stream = ExtResource("15_r04fq")
+volume_db = -11.082
+
+[node name="ParryAudio" type="AudioStreamPlayer2D" parent="Audio" unique_id=1988049965]
+
+[node name="DashAudio" type="AudioStreamPlayer2D" parent="Audio" unique_id=129100493]
+
+[node name="DieAudio" type="AudioStreamPlayer2D" parent="Audio" unique_id=1219573188]
 
 [connection signal="area_entered" from="ParryHitbox" to="." method="_on_parry_hitbox_area_entered"]

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bkj2jae3w5n75"]
 
 [ext_resource type="Script" uid="uid://btc7r4dgpd0yd" path="res://PerryParry/scripts/test_dummy.gd" id="1_a8no1"]
-[ext_resource type="Texture2D" uid="uid://tiys7a1t3n67" path="res://PerryParry/assets/dummy.png" id="2_tgc5u"]
+[ext_resource type="Texture2D" uid="uid://tiys7a1t3n67" path="res://PerryParry/assets/Extra/dummy.png" id="2_tgc5u"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_t2dwb"]
 radius = 25.0

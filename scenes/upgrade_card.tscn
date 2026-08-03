@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://2htqkamejy1s"]
 
 [ext_resource type="Script" uid="uid://b48mos5so2vb6" path="res://PerryParry/scripts/upgrade_card.gd" id="1_lcida"]
-[ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/BoldPixels.ttf" id="2_jmsml"]
+[ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/Extra/BoldPixels.ttf" id="2_jmsml"]
+[ext_resource type="Texture2D" uid="uid://rglfbihs412h" path="res://PerryParry/assets/Icons/ParryIcon.png" id="3_5wwe3"]
 
 [sub_resource type="Animation" id="Animation_lcida"]
 resource_name = "Hover"
@@ -111,24 +112,28 @@ _data = {
 }
 
 [node name="UpgradeCard" type="Control" unique_id=153981883]
+process_mode = 3
 custom_minimum_size = Vector2(250, 420)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -12.0
 offset_right = -842.0
-offset_bottom = -158.0
+offset_bottom = -170.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(1.08, 1.08)
 script = ExtResource("1_lcida")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=46231051]
+process_mode = 3
 libraries/ = SubResource("AnimationLibrary_qmd6h")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1464506940]
 
 [node name="CardButton" type="Button" parent="." unique_id=1108185688]
+process_mode = 3
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -173,6 +178,7 @@ uppercase = true
 [node name="Icon" type="TextureRect" parent="CardButton/CardPanel/MarginContainer/VBoxContainer" unique_id=456475622]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
+texture = ExtResource("3_5wwe3")
 expand_mode = 3
 stretch_mode = 5
 

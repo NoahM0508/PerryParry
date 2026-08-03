@@ -1,11 +1,13 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://b52j6e6bbl5sn"]
 
 [ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_gggy5"]
+[ext_resource type="Texture2D" uid="uid://drc2h4ycnkf7" path="res://PerryParry/assets/Icons/Regen.png" id="1_qncym"]
 
 [resource]
 script = ExtResource("1_gggy5")
 id = "Passive Regen"
 title = "regen"
 description = "Restores a fixed amount of health every second."
+icon = ExtResource("1_qncym")
 stat_name = "passive_regen"
 metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

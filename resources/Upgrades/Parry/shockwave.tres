@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3 uid="uid://b7bkxl17hs0yl"]
 
+[ext_resource type="Texture2D" uid="uid://cquhab02y2eim" path="res://PerryParry/assets/Icons/Shockwave.png" id="1_aqdsw"]
 [ext_resource type="Script" uid="uid://ddvlfj2nro4gv" path="res://PerryParry/scripts/UpgradeData.gd" id="1_v4flj"]
 
 [resource]
@@ -8,6 +9,7 @@ id = "shockwave"
 title = "Shockwave Blast"
 description = "Unlocks a localized kinetic wave that pushes back and damages nearby enemies on parry."
 type = 1
+icon = ExtResource("1_aqdsw")
 stat_name = "shockwave"
 increase_amount = 2.0
 metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

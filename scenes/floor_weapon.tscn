@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://eavcnieyqfhu"]
 
 [ext_resource type="Script" uid="uid://boqq7qftql7c2" path="res://PerryParry/scripts/floor_weapon.gd" id="1_i6col"]
-[ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/BoldPixels.ttf" id="2_uhjpm"]
+[ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/Extra/BoldPixels.ttf" id="2_uhjpm"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_t2dwb"]
 particle_flag_disable_z = true

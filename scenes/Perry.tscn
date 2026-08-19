@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://bpo3llmsqsjmi" path="res://PerryParry/scripts/Perry.gd" id="1_dwos7"]
 [ext_resource type="PackedScene" uid="uid://c64xjkaf02y3k" path="res://PerryParry/scenes/weapon.tscn" id="2_dbm6c"]
-[ext_resource type="Resource" uid="uid://b2pdhr2ghjwwd" path="res://PerryParry/resources/weapons/Epic/Epic Revolver.tres" id="3_dbm6c"]
+[ext_resource type="Resource" uid="uid://dsparlinftjmx" path="res://PerryParry/resources/weapons/Common/starter_pistol.tres" id="2_up5sf"]
 [ext_resource type="PackedScene" uid="uid://eavcnieyqfhu" path="res://PerryParry/scenes/floor_weapon.tscn" id="4_dbm6c"]
-[ext_resource type="Resource" uid="uid://dc4alxl242jyu" path="res://PerryParry/resources/Upgrades/perry_base_upgrades.tres" id="4_dr8nv"]
+[ext_resource type="Script" uid="uid://cr3xaj5k1grod" path="res://PerryParry/scripts/player_upgrades.gd" id="4_eeavq"]
 [ext_resource type="Texture2D" uid="uid://8n8tbu0hup2h" path="res://PerryParry/assets/brackeys_vfx_bundle/particles/alpha/magic_03_a.png" id="6_dkvs5"]
 [ext_resource type="Texture2D" uid="uid://cib0ear4tj7x0" path="res://PerryParry/assets/Perry/Perry_Idle.png" id="6_dr8nv"]
 [ext_resource type="Texture2D" uid="uid://c2ls5cnnjdyn0" path="res://PerryParry/assets/brackeys_vfx_bundle/DashParts2.png" id="6_llf1a"]
@@ -14,7 +14,18 @@
 [ext_resource type="Texture2D" uid="uid://b24lpuvr1cete" path="res://PerryParry/assets/Perry/Perry_Flinch.png" id="8_r04fq"]
 [ext_resource type="Texture2D" uid="uid://d4coogqq007qs" path="res://PerryParry/assets/Perry/Perry_Parry.png" id="10_pc50g"]
 [ext_resource type="Texture2D" uid="uid://dixex381qp7vh" path="res://PerryParry/assets/Perry/Perry_Walk.png" id="11_wkyyn"]
+[ext_resource type="Script" uid="uid://6t5xq5ub4p3l" path="res://PerryParry/scripts/weapon_inventory.gd" id="14_pc50g"]
+[ext_resource type="AudioStream" uid="uid://bi5kdur3i7c4h" path="res://PerryParry/assets/audio/player/parrysfx.mp3" id="15_2hnwn"]
 [ext_resource type="AudioStream" uid="uid://cxubuvindjent" path="res://PerryParry/assets/audio/player/hurt.mp3" id="15_r04fq"]
+[ext_resource type="Script" uid="uid://nmj31p4xkpqv" path="res://PerryParry/scripts/weapon_holder.gd" id="15_wkyyn"]
+[ext_resource type="PackedScene" uid="uid://87hrhcyycjtf" path="res://PerryParry/scenes/combat_stats.tscn" id="16_pc50g"]
+[ext_resource type="AudioStream" uid="uid://d1gno23up8bf7" path="res://PerryParry/assets/audio/player/dashwoosh.mp3" id="16_up5sf"]
+[ext_resource type="AudioStream" uid="uid://b6s6pylvn0f2h" path="res://PerryParry/assets/audio/player/die.mp3" id="17_bly2f"]
+[ext_resource type="PackedScene" uid="uid://d3sc8ray20sai" path="res://PerryParry/scenes/hud.tscn" id="19_y5fos"]
+
+[sub_resource type="Resource" id="Resource_wkyyn"]
+script = ExtResource("4_eeavq")
+metadata/_custom_type_script = "uid://cr3xaj5k1grod"
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_uhjpm"]
 particle_flag_disable_z = true
@@ -153,12 +164,12 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 1.0,
+"duration": 2.0,
 "texture": SubResource("AtlasTexture_1ltm6")
 }],
 "loop": 0,
 "name": &"Flinch",
-"speed": 5.0
+"speed": 1.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -175,7 +186,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"Idle",
-"speed": 5.0
+"speed": 2.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -189,7 +200,7 @@ animations = [{
 }],
 "loop": 2,
 "name": &"Parry",
-"speed": 5.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -221,14 +232,16 @@ gravity = Vector3(0, 0, 0)
 scale_min = 0.08
 scale_max = 0.08
 
-[node name="Perry" type="CharacterBody2D" unique_id=242410739 groups=["Player"]]
+[node name="Perry" type="CharacterBody2D" unique_id=242410739 node_paths=PackedStringArray("hud") groups=["Player"]]
 collision_layer = 3
 collision_mask = 3
 script = ExtResource("1_dwos7")
-master_weapon_scene = ExtResource("2_dbm6c")
-starting_weapon_stats = ExtResource("3_dbm6c")
-player_upgrades = ExtResource("4_dr8nv")
+starting_weapon_stats = ExtResource("2_up5sf")
 floor_weapon_scene = ExtResource("4_dbm6c")
+parry_duration = 0.5
+parry_cooldown = 0.5
+upgrades = SubResource("Resource_wkyyn")
+hud = NodePath("HUD")
 
 [node name="DashParticles2D" type="GPUParticles2D" parent="." unique_id=1560606566]
 position = Vector2(-12, -1.9999999)
@@ -271,12 +284,27 @@ process_material = SubResource("ParticleProcessMaterial_enjla")
 
 [node name="FlinchAudio" type="AudioStreamPlayer2D" parent="Audio" unique_id=1639985838]
 stream = ExtResource("15_r04fq")
-volume_db = -11.082
 
 [node name="ParryAudio" type="AudioStreamPlayer2D" parent="Audio" unique_id=1988049965]
+stream = ExtResource("15_2hnwn")
 
 [node name="DashAudio" type="AudioStreamPlayer2D" parent="Audio" unique_id=129100493]
+stream = ExtResource("16_up5sf")
 
 [node name="DieAudio" type="AudioStreamPlayer2D" parent="Audio" unique_id=1219573188]
+stream = ExtResource("17_bly2f")
+
+[node name="WeaponInventory" type="Node" parent="." unique_id=1089669733]
+script = ExtResource("14_pc50g")
+
+[node name="WeaponHolder" type="Node2D" parent="." unique_id=1693192449]
+position = Vector2(-3, 0)
+script = ExtResource("15_wkyyn")
+master_weapon_scene = ExtResource("2_dbm6c")
+
+[node name="Combat_stats" parent="." unique_id=828640596 instance=ExtResource("16_pc50g")]
+
+[node name="HUD" parent="." unique_id=768987945 instance=ExtResource("19_y5fos")]
+visible = false
 
 [connection signal="area_entered" from="ParryHitbox" to="." method="_on_parry_hitbox_area_entered"]

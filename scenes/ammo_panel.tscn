@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://cvjnf00ekqf4b"]
+
+[ext_resource type="Script" uid="uid://c3qe6lo352v10" path="res://PerryParry/scripts/ammo_panel.gd" id="1_wg6d0"]
+[ext_resource type="Texture2D" uid="uid://c53o5ds1ycp8m" path="res://PerryParry/assets/Icons/BulletDupe.png" id="2_qnbuc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uc8m6"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="AmmoPanel" type="PanelContainer" unique_id=842650773]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_uc8m6")
+script = ExtResource("1_wg6d0")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2020298191]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=1269048938]
+layout_mode = 2
+
+[node name="AmmoIcon" type="TextureRect" parent="MarginContainer/HBoxContainer" unique_id=1376294625]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+texture = ExtResource("2_qnbuc")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=1585261376]
+layout_mode = 2
+
+[node name="AmmoLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=493360107]
+layout_mode = 2
+text = "0 / 0"
+
+[node name="WeaponLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=963280254]
+layout_mode = 2
+text = "Unarmed"
+
+[node name="ReloadingIndicator" type="TextureRect" parent="MarginContainer/HBoxContainer" unique_id=1055689787]
+visible = false
+layout_mode = 2

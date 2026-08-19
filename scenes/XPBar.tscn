@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://chftk0bqgfwir"]
+
+[ext_resource type="Script" uid="uid://odo747a5gdo7" path="res://PerryParry/scripts/xpbar.gd" id="1_rsm25"]
+[ext_resource type="Texture2D" uid="uid://b1ohswpi7evrg" path="res://PerryParry/assets/UI/SimplePixelArtUIpack/Artwork/ColorCustomizible/rounded/InputField_CC.png" id="2_ljskq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ua6j1"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="LabelSettings" id="LabelSettings_ixij1"]
+font_size = 25
+
+[sub_resource type="LabelSettings" id="LabelSettings_nyodu"]
+font_size = 25
+
+[node name="XPBar" type="PanelContainer" unique_id=465103721]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(2, 2)
+theme_override_styles/panel = SubResource("StyleBoxFlat_ua6j1")
+script = ExtResource("1_rsm25")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1044603759]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=2114864679]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=2092417543]
+layout_mode = 2
+
+[node name="TopRow" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=1838884258]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/TopRow" unique_id=642901978]
+layout_mode = 2
+text = "Player Xp"
+label_settings = SubResource("LabelSettings_ixij1")
+
+[node name="Level" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/TopRow" unique_id=1318015800]
+layout_mode = 2
+size_flags_vertical = 8
+text = "Lv.1"
+label_settings = SubResource("LabelSettings_nyodu")
+
+[node name="Progress" type="TextureProgressBar" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=485081338]
+layout_mode = 2
+value = 35.0
+texture_under = ExtResource("2_ljskq")
+texture_over = ExtResource("2_ljskq")
+texture_progress = ExtResource("2_ljskq")
+texture_progress_offset = Vector2(0, -3)
+tint_under = Color(0, 0, 0, 1)
+tint_over = Color(1, 1, 1, 0.1882353)
+tint_progress = Color(0, 1, 0, 1)

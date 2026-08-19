@@ -6,9 +6,6 @@ var card_data: UpgradeCardData
 
 @export var hover_scale := 1.08
 
-
-# --- NODE REFERENCES ---
-# Adjust these paths if Scene Tree differs slightly
 @onready var title_label = $CardButton/CardPanel/MarginContainer/VBoxContainer/Title
 @onready var desc_label = $CardButton/CardPanel/MarginContainer/VBoxContainer/Description
 @onready var bonus_label = $CardButton/CardPanel/MarginContainer/VBoxContainer/BonusLabel
@@ -16,16 +13,22 @@ var card_data: UpgradeCardData
 @onready var rarity_label = $CardButton/CardPanel/MarginContainer/VBoxContainer/RarityLabel
 @onready var icon_rect = $CardButton/CardPanel/MarginContainer/VBoxContainer/Icon
 
-@onready var border = $CardButton/CardPanel
+@onready var card_panel = $CardButton/CardPanel
 @onready var click_button = $CardButton
-@onready var animation: AnimationPlayer = $AnimationPlayer
+@onready var animation: AnimationPlayer = $CardButton/AnimationPlayer
+
+var hover_tween : Tween
 
 func _ready():
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
 	click_button.mouse_entered.connect(_on_mouse_entered)
 	click_button.mouse_exited.connect(_on_mouse_exited)
 	click_button.pressed.connect(_on_pressed)
 	
+	animation.play("Idle")
+	animation.stop()
+
 func setup(card: UpgradeCardData) -> void:
 	card_data = card
 
@@ -37,14 +40,15 @@ func setup(card: UpgradeCardData) -> void:
 		card.next_level
 	]
 	bonus_label.text = "+%s" % card.bonus_amount
-
+	
 	update_rarity()
+	
 
 func update_rarity():
 
 	var color = get_rarity_color(card_data.rarity)
 
-	border.modulate = color
+	card_panel.modulate = color
 
 	rarity_label.text = get_rarity_name(card_data.rarity)
 
@@ -93,12 +97,51 @@ func get_rarity_color(rarity: UpgradeData.Rarity) -> Color:
 
 func _on_mouse_entered():
 
-	animation.play("Hover")
+	if hover_tween:
+		hover_tween.kill()
+
+	hover_tween = create_tween()
+
+	hover_tween.set_trans(Tween.TRANS_BACK)
+	hover_tween.set_ease(Tween.EASE_OUT)
+
+	hover_tween.tween_property(
+		card_panel,
+		"scale",
+		Vector2.ONE * 1.08,
+		0.12
+	)
+
+	hover_tween.parallel().tween_property(
+		card_panel,
+		"position:y",
+		-12,
+		0.12
+	)
 
 func _on_mouse_exited():
 
-	animation.play_backwards("Hover")
+	if hover_tween:
+		hover_tween.kill()
 
+	hover_tween = create_tween()
+
+	hover_tween.set_trans(Tween.TRANS_BACK)
+	hover_tween.set_ease(Tween.EASE_OUT)
+
+	hover_tween.tween_property(
+		card_panel,
+		"scale",
+		Vector2.ONE,
+		0.12
+	)
+
+	hover_tween.parallel().tween_property(
+		card_panel,
+		"position:y",
+		0,
+		0.12
+	)
 func _on_pressed():
 
 	animation.play("Select")

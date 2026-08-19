@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://bggdadtaj8au5" path="res://PerryParry/assets/Bullets/PistolAmmoSmall.png" id="1_mqool"]
 [ext_resource type="Script" uid="uid://dxy6j5tfoppal" path="res://PerryParry/scripts/weapon_stats.gd" id="1_t7mtc"]
 [ext_resource type="PackedScene" uid="uid://bns8kd53f2yov" path="res://PerryParry/scenes/Pistol_Projectile.tscn" id="2_mmtf4"]
+[ext_resource type="AudioStream" uid="uid://bp3fnkiigo6n5" path="res://PerryParry/assets/audio/guns/gun1.mp3" id="2_oer3r"]
 [ext_resource type="Texture2D" uid="uid://da40u5rcy1oi" path="res://PerryParry/assets/Guns/Revolver.png" id="4_oer3r"]
 
 [resource]
@@ -10,10 +11,13 @@ script = ExtResource("1_t7mtc")
 weapon_name = "Revolver"
 weapon_texture = ExtResource("4_oer3r")
 projectile_scene = ExtResource("2_mmtf4")
+muzzle_position = Vector2(8, -3)
 rarity = 3
 rarity_color = Color(0.5019608, 0, 1, 1)
 ammo_icon = ExtResource("1_mqool")
-damage = 20.0
+fire_sound = ExtResource("2_oer3r")
+damage = 15.0
 fire_rate = 10.0
 magazine_size = 6
+reload_time = 0.5
 metadata/_custom_type_script = "uid://dxy6j5tfoppal"

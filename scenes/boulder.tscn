@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://cop5240j1yfgw"]
+
+[ext_resource type="Texture2D" uid="uid://duvs6dqg4fkqg" path="res://PerryParry/assets/EnemySprite/Rock.png" id="1_1s5j2"]
+[ext_resource type="Script" uid="uid://tu3cy7r5djfp" path="res://PerryParry/scripts/boulder.gd" id="1_bcwph"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_t2dwb"]
+radius = 14.3178215
+
+[node name="boulder" type="Area2D" unique_id=255522611]
+script = ExtResource("1_bcwph")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=175358303]
+texture = ExtResource("1_1s5j2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=376414125]
+shape = SubResource("CircleShape2D_t2dwb")

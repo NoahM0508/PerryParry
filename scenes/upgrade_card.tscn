@@ -4,6 +4,10 @@
 [ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/Extra/BoldPixels.ttf" id="2_jmsml"]
 [ext_resource type="Texture2D" uid="uid://rglfbihs412h" path="res://PerryParry/assets/Icons/ParryIcon.png" id="3_5wwe3"]
 
+[sub_resource type="Animation" id="Animation_qmd6h"]
+resource_name = "Close"
+length = 0.18
+
 [sub_resource type="Animation" id="Animation_lcida"]
 resource_name = "Hover"
 length = 0.18
@@ -72,24 +76,12 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(1.08, 1.08)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0, -12)]
+"values": [Vector2(1.15, 1.15)]
 }
 
 [sub_resource type="Animation" id="Animation_pl6ov"]
 resource_name = "Select"
-length = 0.18
+length = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -97,14 +89,15 @@ tracks/0/path = NodePath(".:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.049999997, 0.18),
+"times": PackedFloat32Array(0, 0.02364233, 0.1),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector2(1.08, 1.08), Vector2(1.15, 1.15), Vector2(0.95, 0.95)]
+"values": [Vector2(1, 1), Vector2(1.15, 1.15), Vector2(0.95, 0.95)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_qmd6h"]
 _data = {
+&"Close": SubResource("Animation_qmd6h"),
 &"Hover": SubResource("Animation_lcida"),
 &"Idle": SubResource("Animation_jmsml"),
 &"RESET": SubResource("Animation_5wwe3"),
@@ -118,17 +111,12 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -12.0
 offset_right = -842.0
-offset_bottom = -170.0
+offset_bottom = -158.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(1.08, 1.08)
+scale = Vector2(1.15, 1.15)
 script = ExtResource("1_lcida")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=46231051]
-process_mode = 3
-libraries/ = SubResource("AnimationLibrary_qmd6h")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1464506940]
 
@@ -148,14 +136,18 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="CardButton/CardPanel" unique_id=1749835968]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -7.0
+offset_bottom = -7.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
@@ -164,6 +156,7 @@ theme_override_constants/margin_bottom = 16
 [node name="VBoxContainer" type="VBoxContainer" parent="CardButton/CardPanel/MarginContainer" unique_id=1789939415]
 layout_mode = 2
 offset_transform_enabled = true
+mouse_filter = 2
 theme_override_constants/separation = 20
 alignment = 1
 
@@ -178,6 +171,7 @@ uppercase = true
 [node name="Icon" type="TextureRect" parent="CardButton/CardPanel/MarginContainer/VBoxContainer" unique_id=456475622]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
+mouse_filter = 2
 texture = ExtResource("3_5wwe3")
 expand_mode = 3
 stretch_mode = 5
@@ -202,6 +196,7 @@ horizontal_alignment = 1
 
 [node name="Description" type="RichTextLabel" parent="CardButton/CardPanel/MarginContainer/VBoxContainer" unique_id=1670437223]
 layout_mode = 2
+mouse_filter = 2
 theme_override_fonts/normal_font = ExtResource("2_jmsml")
 text = "Increases attack speed."
 fit_content = true
@@ -211,6 +206,12 @@ horizontal_alignment = 1
 [node name="Spacer" type="Control" parent="CardButton/CardPanel/MarginContainer/VBoxContainer" unique_id=277699168]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="CardButton" unique_id=46231051]
+process_mode = 3
+root_node = NodePath("../..")
+libraries/ = SubResource("AnimationLibrary_qmd6h")
 
 [connection signal="mouse_entered" from="CardButton" to="." method="_on_card_button_mouse_entered"]
 [connection signal="mouse_exited" from="CardButton" to="." method="_on_card_button_mouse_exited"]

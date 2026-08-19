@@ -9,6 +9,6 @@ id = "damage_buff"
 title = "Damage Buff"
 description = "Increases the base damage of every bullet or attack you fire."
 icon = ExtResource("1_n07qu")
-stat_name = "damage_buff"
+stat_name = "damage"
 increase_amount = 2.0
 metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

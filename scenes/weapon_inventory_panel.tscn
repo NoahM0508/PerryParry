@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://cwdrc3cjicw1y"]
+
+[ext_resource type="Script" uid="uid://cj4s3pbprw6o1" path="res://PerryParry/scripts/weapon_inventory_panel.gd" id="1_ytim5"]
+[ext_resource type="PackedScene" uid="uid://dclo1n8p4ghml" path="res://PerryParry/scenes/weapon_slot.tscn" id="2_k0chh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k0chh"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="WeaponInventoryPanel" type="PanelContainer" unique_id=1380439282]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -97.0
+offset_top = -63.0
+offset_right = 97.0
+offset_bottom = 63.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_k0chh")
+script = ExtResource("1_ytim5")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1310138246]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=768113037]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Slot1" parent="MarginContainer/HBoxContainer" unique_id=469697594 instance=ExtResource("2_k0chh")]
+layout_mode = 2
+
+[node name="Slot2" parent="MarginContainer/HBoxContainer" unique_id=806542923 instance=ExtResource("2_k0chh")]
+layout_mode = 2

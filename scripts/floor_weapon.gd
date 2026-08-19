@@ -11,6 +11,7 @@ var is_player_near: bool = false
 var player_ref: Node = null
 
 func _ready() -> void:
+	add_to_group("FloorWeapons")
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 
@@ -31,7 +32,6 @@ func _process(_delta: float) -> void:
 			queue_free()
 
 func setup_visuals() -> void:
-	# 1. Update the actual pixel art of the gun
 	if stats.weapon_texture:
 		weapon_sprite.texture = stats.weapon_texture
 		

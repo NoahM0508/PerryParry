@@ -5,15 +5,28 @@ class_name WeaponStats
 enum Rarity { COMMON, UNCOMMON, RARE, EPIC, LEGENDARY, MYTHIC }
 enum FirePattern { SINGLE_SHOT, SHOTGUN, LASER, BURST_SHOT }
 
+enum WeaponType {
+	PISTOL,
+	RIFLE,
+	SHOTGUN,
+	SMG,
+	SNIPER,
+	HEAVY,
+	ENERGY,
+	MELEE
+}
+
 @export_category("Visuals & Identity")
 @export var weapon_name: String = "New Weapon"
-@export var weapon_type: String = "Pistol"
+@export var weapon_type : WeaponType
 @export var weapon_texture: Texture2D
 @export var projectile_scene: PackedScene
 @export var muzzle_position: Vector2 = Vector2(10, -2) # The X,Y coordinates of the barrel
 @export var rarity: Rarity = Rarity.COMMON
 @export var rarity_color: Color = Color(0.5, 0.5, 0.5) # Default Gray
 @export var ammo_icon: Texture2D
+@export var fire_sound: AudioStream
+@export var fire_sound_volume_db: float = -8.0
 
 @export_category("Basic Stats")
 @export var fire_pattern: FirePattern = FirePattern.SINGLE_SHOT
@@ -40,5 +53,3 @@ enum FirePattern { SINGLE_SHOT, SHOTGUN, LASER, BURST_SHOT }
 @export var burst_count: int = 1
 @export var burst_delay: float = 0.1
 @export var charge_time: float = 0.0
-@export var heat_generation: float = 0.0
-@export var recoil: float = 0.0

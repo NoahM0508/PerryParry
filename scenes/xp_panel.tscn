@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://6k3uhesq7mh3"]
+
+[ext_resource type="PackedScene" uid="uid://chftk0bqgfwir" path="res://PerryParry/scenes/XPBar.tscn" id="1_m64qs"]
+[ext_resource type="Script" uid="uid://dlpirvx0dn2wa" path="res://PerryParry/scripts/xp_panel.gd" id="1_m253j"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a4331"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="XPPanel" type="PanelContainer" unique_id=1885449737]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_a4331")
+script = ExtResource("1_m253j")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=633389010]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=741848000]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PlayerXPBar" parent="MarginContainer/VBoxContainer" unique_id=465103721 instance=ExtResource("1_m64qs")]
+layout_mode = 2
+
+[node name="ParryXPBar" parent="MarginContainer/VBoxContainer" unique_id=91881443 instance=ExtResource("1_m64qs")]
+layout_mode = 2

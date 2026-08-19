@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dyac5xh1bgv3s"]
 
-[ext_resource type="Script" uid="uid://7ygk61abi45o" path="res://PerryParry/scripts/shotgun_shell.gd" id="1_3hem3"]
+[ext_resource type="Script" uid="uid://bdnac7ngouwl0" path="res://PerryParry/scripts/base_projectile.gd" id="1_3hem3"]
 [ext_resource type="Texture2D" uid="uid://b5xknj4hjn33t" path="res://PerryParry/assets/Bullets/ShotgunShellSmall.png" id="1_aypok"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t2dwb"]

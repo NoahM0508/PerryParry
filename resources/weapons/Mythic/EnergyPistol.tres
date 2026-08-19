@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://beklohasi8orj"]
+
+[ext_resource type="Script" uid="uid://dxy6j5tfoppal" path="res://PerryParry/scripts/weapon_stats.gd" id="1_k0pi3"]
+[ext_resource type="Texture2D" uid="uid://dt03upu6xdtj0" path="res://PerryParry/assets/Bullets/EngergyShot.png" id="1_ksvk3"]
+[ext_resource type="Texture2D" uid="uid://cvg0ycehmlneq" path="res://PerryParry/assets/Guns/Pack 2/1px/2.png" id="2_cv5gb"]
+[ext_resource type="AudioStream" uid="uid://cowwr2g3b5xev" path="res://PerryParry/assets/audio/guns/lazergun.mp3" id="2_mpho2"]
+[ext_resource type="PackedScene" uid="uid://c81lljt4mlcsy" path="res://PerryParry/scenes/energy_projectile.tscn" id="3_03j2l"]
+
+[resource]
+script = ExtResource("1_k0pi3")
+weapon_name = "Energy Pistol"
+weapon_type = 6
+weapon_texture = ExtResource("2_cv5gb")
+projectile_scene = ExtResource("3_03j2l")
+muzzle_position = Vector2(12, 0)
+rarity = 5
+rarity_color = Color(1, 0, 0, 1)
+ammo_icon = ExtResource("1_ksvk3")
+fire_sound = ExtResource("2_mpho2")
+damage = 100.0
+magazine_size = 12
+metadata/_custom_type_script = "uid://dxy6j5tfoppal"

@@ -3,6 +3,10 @@
 [ext_resource type="Script" uid="uid://50nawlb672ij" path="res://PerryParry/scripts/upgrade_screen.gd" id="1_3cnt7"]
 [ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/Extra/BoldPixels.ttf" id="2_cy4gn"]
 
+[sub_resource type="Animation" id="Animation_cy4gn"]
+resource_name = "Close"
+length = 0.18
+
 [sub_resource type="Animation" id="Animation_84b3w"]
 resource_name = "Open"
 length = 0.25
@@ -84,6 +88,7 @@ tracks/2/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ytcsi"]
 _data = {
+&"Close": SubResource("Animation_cy4gn"),
 &"Open": SubResource("Animation_84b3w"),
 &"RESET": SubResource("Animation_y2gxj")
 }

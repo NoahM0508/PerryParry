@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://bb0i1ur3wr0pi"]
+
+[ext_resource type="Script" uid="uid://sj0dkxp1xg7x" path="res://PerryParry/scripts/music_manager.gd" id="1_v4k8d"]
+[ext_resource type="AudioStream" uid="uid://cqhyjvoxcx1bg" path="res://PerryParry/assets/audio/music/Backgroundmusic.mp3" id="2_8b3jq"]
+[ext_resource type="AudioStream" uid="uid://bf5bdsy0ce7d4" path="res://PerryParry/assets/audio/music/arena music.mp3" id="3_yk5eb"]
+[ext_resource type="AudioStream" uid="uid://ck0e4qlumgyiq" path="res://PerryParry/assets/audio/music/boss music.mp3" id="4_inc5y"]
+
+[node name="Music" type="Node" unique_id=532198012]
+script = ExtResource("1_v4k8d")
+main_theme = ExtResource("2_8b3jq")
+arena_theme = ExtResource("3_yk5eb")
+boss_theme = ExtResource("4_inc5y")

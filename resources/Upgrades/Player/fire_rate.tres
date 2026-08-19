@@ -10,5 +10,5 @@ title = "Attack Speed"
 description = "Fires bullets faster, drastically increasing damage per second."
 icon = ExtResource("1_gre7s")
 stat_name = "fire_rate"
-increase_amount = 0.1
+increase_amount = 0.2
 metadata/_custom_type_script = "uid://ddvlfj2nro4gv"

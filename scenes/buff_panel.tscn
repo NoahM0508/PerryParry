@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://vimp4770cqx6"]
+
+[node name="BuffPanel" type="PanelContainer" unique_id=1024462460]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HFlowContainer" type="HFlowContainer" parent="." unique_id=825329570]
+layout_mode = 2

@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://c7qew31pc07nt"]
+
+[ext_resource type="Script" uid="uid://cs7cpx81ctas6" path="res://PerryParry/scripts/boss_enemy.gd" id="1_jtd6a"]
+[ext_resource type="Texture2D" uid="uid://c4uyp7klfq2un" path="res://PerryParry/assets/EnemySprite/Zomb.png" id="2_t55le"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t2dwb"]
+size = Vector2(21, 54)
+
+[sub_resource type="Theme" id="Theme_1eg6m"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6g1sh"]
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a23fs"]
+bg_color = Color(0.60788375, 0.040746786, 0.11110436, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="Boss_Enemy" type="CharacterBody2D" unique_id=1792243361]
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("1_jtd6a")
+throw_interval = 1.0
+max_health = 5000
+move_speed = 200.0
+attack_range = 4000.0
+ai_level = 10
+heal_amount = 100
+heal_interval = 0.1
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1059933057]
+position = Vector2(2, 1)
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("2_t55le")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1483303573]
+position = Vector2(2.5, 1)
+shape = SubResource("RectangleShape2D_t2dwb")
+
+[node name="PlayerDetector" type="RayCast2D" parent="." unique_id=739903067]
+target_position = Vector2(31, 0)
+collision_mask = 5
+
+[node name="StateTimer" type="Timer" parent="." unique_id=400550307]
+
+[node name="EnemyHealth" type="ProgressBar" parent="." unique_id=870818176]
+visible = false
+offset_left = -16.0
+offset_top = 12.0
+offset_right = 18.0
+offset_bottom = 19.0
+theme = SubResource("Theme_1eg6m")
+theme_override_styles/background = SubResource("StyleBoxFlat_6g1sh")
+theme_override_styles/fill = SubResource("StyleBoxFlat_a23fs")
+show_percentage = false

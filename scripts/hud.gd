@@ -1,86 +1,133 @@
 extends CanvasLayer
 
-@export var player_node_path: NodePath = NodePath("%Player") 
+@onready var health_panel = %HealthPanel
+@onready var xp_panel = %XPPanel
+@onready var inventory_panel = %WeaponInventoryPanel
+@onready var ammo_panel = %AmmoPanel
+@onready var cooldown_panel = %CooldownPanel
 
-@onready var player = get_node_or_null(player_node_path)
-@onready var health_label: Label = $"MarginContainer/VBoxContainer/Health Panel/MarginContainer/VBoxContainer/HealthBar/HealthLabel"
-@onready var health_bar: TextureProgressBar = $"MarginContainer/VBoxContainer/Health Panel/MarginContainer/VBoxContainer/HealthBar"
+@onready var wave_label: Label = %WaveLabel
+@onready var boss_box: VBoxContainer = %BossBox
+@onready var boss_name_label: Label = %BossNameLabel
+@onready var boss_progress_bar: ProgressBar = %BossProgressBar
+@onready var survival_label: Label = %SurvivalLabel
+@onready var banner_label: Label = %BannerLabel
 
-@onready var weapon_panel = $MarginContainer/VBoxContainer/WeaponPanel
-@onready var weapon_texture = $MarginContainer/VBoxContainer/WeaponPanel/MarginContainer/HBoxContainer/WeaponSprite
-@onready var weapon_name: Label = $MarginContainer/VBoxContainer/WeaponPanel/MarginContainer/HBoxContainer/VBoxContainer/WeaponName
+var banner_timer: float = 0.0
+var in_arena_room: bool = false
+var in_boss_room: bool = false
+var boss_defeated: bool = false
+var is_overtime: bool = false
+var survival_elapsed: float = 0.0
+var arena_cleared_recorded: bool = false
 
-@onready var ammo_label: Label = $"MarginContainer/VBoxContainer/Ammo Panel/MarginContainer/HBoxContainer/AmmoLabel"
-@onready var ammo_icon: TextureRect = $"MarginContainer/VBoxContainer/Ammo Panel/MarginContainer/HBoxContainer/AmmoIcon"
-
+var boss_ref: Node = null
 
 func _ready() -> void:
-	if player:
-		# Connect the signals from your Perry script
-		player.health_changed.connect(_on_health_changed)
-		player.inventory_changed.connect(_on_inventory_changed)
-		player.ammo_changed.connect(_on_ammo_changed)
-		
-		# Initialize the HUD with the starting values
-		_on_health_changed(player.health, player.max_health)
-		_on_inventory_changed()
+	add_to_group("HUD")
+	var current_scene_name = get_tree().current_scene.name if get_tree().current_scene else ""
+	var current_scene_path = get_tree().current_scene.scene_file_path if get_tree().current_scene else ""
 
-func _on_health_changed(current:int,max_health:int):
+	in_boss_room = "boss" in current_scene_name.to_lower() or "boss" in current_scene_path.to_lower()
+	in_arena_room = ("arena" in current_scene_name.to_lower() or "arena" in current_scene_path.to_lower()) and not in_boss_room
 
-	health_bar.max_value = max_health
-	health_bar.value = current
+	if wave_label: wave_label.visible = in_arena_room
+	if boss_box: boss_box.visible = in_boss_room
 
-	health_label.text = "%d / %d" % [current,max_health]
+func initialize(player):
+	health_panel.set_health(player.health, player.max_health)
+	if not player.health_changed.is_connected(health_panel.set_health):
+		player.health_changed.connect(health_panel.set_health)
 
-	if current < max_health * .3:
-		health_bar.tint_progress = Color.RED
-	else:
-		health_bar.tint_progress = Color.GREEN
+	xp_panel.set_player(player)
+	inventory_panel.set_inventory(player.weapon_inventory)
+	cooldown_panel.initialize(player)
 
-func _on_inventory_changed():
-	var weapon = player.get_active_weapon()
+	ammo_panel.set_weapon(player.weapon_holder.get_weapon())
+	if not player.weapon_holder.weapon_changed.is_connected(ammo_panel.set_weapon):
+		player.weapon_holder.weapon_changed.connect(ammo_panel.set_weapon)
 
-	# 1. Grab the current stylebox and duplicate it so we don't overwrite everything else
-	var panel_style = weapon_panel.get_theme_stylebox("panel").duplicate()
+func show_banner_message(text_msg: String, color: Color = Color.RED, duration: float = 3.0) -> void:
+	if banner_label:
+		banner_label.text = text_msg
+		banner_label.add_theme_color_override("font_color", color)
+		banner_label.visible = true
+		banner_timer = duration
 
-	# 2. Handle the Unarmed State
-	if weapon == null:
-		weapon_name.text = "Unarmed"
-		weapon_texture.texture = null
-		ammo_icon.texture = null
-		
-		# Set to Black with 0 Alpha (Completely transparent)
-		panel_style.bg_color = Color(0, 0, 0, 0)
-		weapon_panel.add_theme_stylebox_override("panel", panel_style)
+func _process(delta: float) -> void:
+	if banner_timer > 0.0:
+		banner_timer -= delta
+		if banner_timer <= 0.0 and banner_label:
+			banner_label.visible = false
+
+	# --- ARENA ROOM WAVE TRACKING ---
+	if in_arena_room and wave_label:
+		var director = get_tree().get_first_node_in_group("RunDirector")
+		var wave_str: String = ""
+		var remaining_count: int = 0
+
+		if director:
+			var cur_w: int = (director.get("current_wave_index") + 1) if director.get("current_wave_index") != null else 1
+			var total_w: int = director.get("wave_enemy_counts").size() if director.get("wave_enemy_counts") != null else 1
+			wave_str = "WAVE %d/%d - " % [cur_w, total_w]
+
+			var active_list = director.get("active_wave_enemies")
+			if active_list is Array:
+				for e in active_list:
+					if is_instance_valid(e) and not e.is_queued_for_deletion():
+						if e.get("current_state") != null and e.get("current_state") == e.State.DEAD:
+							continue
+						remaining_count += 1
+		else:
+			var enemies = get_tree().get_nodes_in_group("Enemies")
+			remaining_count = enemies.size()
+
+		wave_label.text = wave_str + "ENEMIES: " + str(remaining_count)
+
+	# --- BOSS ROOM & BOSS HP TRACKING ---
+	if in_boss_room:
+		if boss_ref == null or not is_instance_valid(boss_ref):
+			var bosses = get_tree().get_nodes_in_group("Boss")
+			if bosses.size() > 0:
+				boss_ref = bosses[0]
+
+		if boss_ref and is_instance_valid(boss_ref) and boss_progress_bar and not boss_defeated:
+			var max_hp = boss_ref.get("max_health")
+			var cur_hp = boss_ref.get("current_health")
+			if max_hp != null and cur_hp != null and max_hp > 0:
+				boss_progress_bar.value = clamp((float(cur_hp) / float(max_hp)) * 100.0, 0.0, 100.0)
+
+			if cur_hp != null and cur_hp <= 0:
+				on_boss_defeated()
+
+	# --- OVERTIME SURVIVAL TIMER ---
+	if is_overtime:
+		survival_elapsed += delta
+		if UpgradeManager != null:
+			UpgradeManager.update_survival_time(survival_elapsed)
+
+		if survival_label:
+			var mins: int = int(survival_elapsed / 60.0)
+			var secs: float = fmod(survival_elapsed, 60.0)
+			survival_label.text = "SURVIVAL TIME: %02d:%04.1f" % [mins, secs]
+
+func on_boss_defeated() -> void:
+	if boss_defeated:
 		return
+	boss_defeated = true
+	if boss_progress_bar:
+		boss_progress_bar.value = 0.0
+	if boss_box:
+		boss_box.visible = false
+	show_banner_message("YOU WON!", Color.GREEN, 2.5)
 
-	# 3. Extract the Stats
-	var stats = null
-	if weapon is Node2D and "stats" in weapon:
-		stats = weapon.stats
-	elif weapon is WeaponStats:
-		stats = weapon
-	elif weapon is Resource and "weapon_name" in weapon:
-		stats = weapon
+	await get_tree().create_timer(2.5).timeout
+	show_banner_message("SURVIVE!", Color.RED, 3.0)
 
-	# 4. Fallback if stats fail to load
-	if stats == null:
-		weapon_name.text = "Unarmed"
-		weapon_texture.texture = null
-		ammo_icon.texture = null
-		
-		panel_style.bg_color = Color(0, 0, 0, 0)
-		weapon_panel.add_theme_stylebox_override("panel", panel_style)
-		return
+	is_overtime = true
+	if survival_label:
+		survival_label.visible = true
 
-	# 5. Handle the Equipped State
-	weapon_name.text = stats.weapon_name
-	weapon_texture.texture = stats.weapon_texture
-	ammo_icon.texture = stats.ammo_icon
-	
-	# Set to Rarity Color with an alpha of 120 (which is ~0.47 in Godot's 0-1 scale)
-	panel_style.bg_color = Color(stats.rarity_color, 0.6)
-	weapon_panel.add_theme_stylebox_override("panel", panel_style)
-
-func _on_ammo_changed(current,max_ammo):
-	ammo_label.text = "%d / %d" % [current,max_ammo]		
+	var director = get_tree().get_first_node_in_group("RunDirector")
+	if director and director.has_method("start_overtime"):
+		director.start_overtime()

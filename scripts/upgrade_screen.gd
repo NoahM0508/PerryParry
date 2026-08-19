@@ -7,9 +7,13 @@ const CARD_SCENE := preload("res://PerryParry/scenes/upgrade_card.tscn")
 @onready var card_container = $ColorRect/CenterContainer/VBoxContainer/CardContainer
 @onready var animation_player = $AnimationPlayer
 
+
 var player_upgrades: PlayerUpgrades
 
-func open_upgrade_screen(upgrades: PlayerUpgrades) -> void:
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+func open_upgrade_screen(upgrades: PlayerUpgrades, pool_type: String = "player") -> void:
 
 	player_upgrades = upgrades
 
@@ -23,7 +27,11 @@ func open_upgrade_screen(upgrades: PlayerUpgrades) -> void:
 	for child in card_container.get_children():
 		child.queue_free()
 
-	var cards = UpgradeManager.generate_player_cards(player_upgrades)
+	var cards: Array[UpgradeCardData]
+	if pool_type == "parry":
+		cards = UpgradeManager.generate_parry_cards(player_upgrades)
+	else:
+		cards = UpgradeManager.generate_player_cards(player_upgrades)
 
 	for card_data in cards:
 
@@ -37,20 +45,30 @@ func open_upgrade_screen(upgrades: PlayerUpgrades) -> void:
 
 func _on_card_selected(card_data: UpgradeCardData) -> void:
 
-	var dict = UpgradeManager.get_dictionary(
+	var level_dict = UpgradeManager.get_dictionary(
+		card_data.upgrade.type,
+		player_upgrades
+	)
+	var bonus_dict = UpgradeManager.get_bonus_dictionary(
 		card_data.upgrade.type,
 		player_upgrades
 	)
 
-	dict[card_data.upgrade.id] = dict.get(
+	level_dict[card_data.upgrade.id] = level_dict.get(
 		card_data.upgrade.id,
 		0
 	) + 1
 
+	bonus_dict[card_data.upgrade.id] = bonus_dict.get(
+		card_data.upgrade.id,
+		0.0
+	) + card_data.bonus_amount
+
 	if animation_player:
 		animation_player.play("Close")
 
-	await get_tree().process_frame
+	if animation_player:
+		await animation_player.animation_finished
 
 	hide()
 

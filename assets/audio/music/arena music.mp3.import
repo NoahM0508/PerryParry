@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bf5bdsy0ce7d4"
+path="res://.godot/imported/arena music.mp3-e399583cd1b33cbe810b9c3b42c0b654.mp3str"
+
+[deps]
+
+source_file="res://PerryParry/assets/audio/music/arena music.mp3"
+dest_files=["res://.godot/imported/arena music.mp3-e399583cd1b33cbe810b9c3b42c0b654.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

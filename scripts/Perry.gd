@@ -1,7 +1,6 @@
 extends CharacterBody2D
 
 @export_category("Weapon System")
-@export var master_weapon_scene: PackedScene
 @export var starting_weapon_stats: Resource 
 
 @export_category("Movement Stats")
@@ -15,7 +14,6 @@ extends CharacterBody2D
 @export var invincibility_duration: float = 0.35
 @export var fire_action: String = "shoot"
 @export var reload_action: String = "reload"
-@export var player_upgrades: PlayerUpgrades
 
 @export_category("Spawners")
 @export var floor_weapon_scene: PackedScene 
@@ -23,12 +21,32 @@ extends CharacterBody2D
 @export_category("Parry Settings")
 @export var parry_duration: float = 0.9  
 @export var parry_cooldown: float = 0.1  
+@export var parry_xp_reward: int = 5
+@export var parries_for_level_two: int = 8
+@export var parries_required_increase: int = 4
+
+@export_category("Parry Effects")
+@export var crit_overload_duration: float = 1.0
+@export var crit_overload_bonus: float = 0.5
+@export var parry_duplicate_spread_degrees: float = 24.0
+@export var explosive_retaliation_radius: float = 80.0
+@export var explosive_retaliation_damage: int = 30
+@export var shockwave_radius: float = 90.0
+@export var shockwave_damage: int = 12
+@export var shockwave_push_distance: float = 32.0
+
+@export var upgrades: PlayerUpgrades
+@export var hud: CanvasLayer
 
 @onready var parry_hitbox: Area2D = $ParryHitbox
 @onready var dash_particles = $DashParticles2D
+@onready var combat_stats: CombatStats = $Combat_stats
+
+@onready var weapon_inventory: WeaponInventory = $WeaponInventory
+@onready var weapon_holder: WeaponHolder = $WeaponHolder
 
 # --- ANIMATION & AUDIO NODES ---
-@onready var anim = $AnimatedSprite2D # Or $AnimationPlayer if you prefer!
+@onready var anim = $AnimatedSprite2D
 @onready var audio_dash = $Audio/DashAudio
 @onready var audio_parry = $Audio/ParryAudio
 @onready var audio_flinch = $Audio/FlinchAudio
@@ -37,10 +55,12 @@ extends CharacterBody2D
 const upgrade_screen = preload("res://PerryParry/scenes/upgrade_screen.tscn")
 
 signal health_changed(current: int, max: int)
-signal inventory_changed()
 signal ammo_changed(current: int, max: int)
 signal weapon_reloaded(slot_index: int)
 signal xp_changed(current, required, level)
+signal parry_xp_changed(current, required, level)
+signal dash_started(time: float)
+signal parry_started(time: float)
 
 var health: int = max_health
 var dash_timer: float = 0.0
@@ -53,33 +73,61 @@ var current_xp: int = 0
 var xp_to_next_level: int = 100
 var parry_level: int = 1
 var current_parry_xp: int = 0
-var parry_xp_to_next: int = 10
+var parry_xp_to_next: int = 4
 var is_parrying: bool = false
 var parry_cooldown_timer: float = 0.0
+var pending_upgrade_queue: Array[String] = []
+var upgrade_in_progress: bool = false
+var passive_regen_bank: float = 0.0
+var crit_overload_timer: float = 0.0
 
-var inventory: Array = [null, null]
-var active_weapon_index: int = 0
 
 func _ready() -> void:
+	add_to_group("Player")
+	if combat_stats:
+		combat_stats.base_max_health = max_health
+		combat_stats.base_move_speed = move_speed
+	parry_xp_to_next = parries_for_level_two
+	rebuild_stats()
 	health = max_health
 
-	if master_weapon_scene and starting_weapon_stats:
-		var w = master_weapon_scene.instantiate()
-		w.stats = starting_weapon_stats 
-		add_child(w)
-		inventory[0] = w
-		active_weapon_index = 0
-		
-		if w.has_signal("ammo_changed"):
-			w.ammo_changed.connect(_on_weapon_ammo_changed)
-		if w.has_signal("reload_finished"):
-			w.reload_finished.connect(_on_weapon_reload_finished)
-	else:
-		printerr("Player Error: Master Weapon Scene or Starting Stats missing in Inspector!")
+	# Restore state if returning from an Arena scene transition!
+	if UpgradeManager.has_saved_data:
+		UpgradeManager.restore_player_state(self)
+		UpgradeManager.restore_current_scene_state(get_tree().current_scene)
 
-	emit_signal("inventory_changed")
+	# 1. If returning to maze level from an Arena exit door
+	if UpgradeManager.is_returning_to_maze and UpgradeManager.return_spawn_position != Vector2.ZERO:
+		global_position = UpgradeManager.return_spawn_position + Vector2(0, 32)
+		UpgradeManager.return_spawn_position = Vector2.ZERO
+		UpgradeManager.is_returning_to_maze = false
+	# 2. Otherwise, if entering an Arena room, position player right in front of the Arena door in the new scene
+	elif not UpgradeManager.is_returning_to_maze:
+		var doors = get_tree().get_nodes_in_group("Doors")
+		var matched_door: Node2D = null
+		for d in doors:
+			if d is Node2D:
+				if d.get("is_exit_door") == true or d.get("door_id") == UpgradeManager.target_door_id:
+					matched_door = d
+					break
+		if matched_door != null:
+			global_position = matched_door.global_position + Vector2(0, 48)
+		UpgradeManager.target_door_id = 0
+
+	# Listen for new physical weapons to hook up their UI signals
+	weapon_holder.weapon_changed.connect(_on_weapon_changed)
+
+	weapon_holder.initialize(self)
+
+	# Only equip starting weapon on a fresh run when no saved data exists!
+	if not UpgradeManager.has_saved_data and starting_weapon_stats and weapon_inventory.slots[0] == null:
+		weapon_inventory.equip_weapon(starting_weapon_stats, 0)
+
+	# Initialize the HUD if we linked it in the editor!
+	if hud:
+		hud.initialize(self)
+		hud.visible = true
 	emit_signal("health_changed", health, max_health)
-
 func _physics_process(delta: float) -> void:
 	# Dash Timer Logic
 	if dash_timer > 0.0:
@@ -95,17 +143,22 @@ func _physics_process(delta: float) -> void:
 		invincibility_timer -= delta
 		if invincibility_timer <= 0.0:
 			modulate.a = 1.0
-		dash_particles.emitting = is_dashing
-		
+
+	dash_particles.emitting = is_dashing
+
 	if parry_cooldown_timer > 0.0:
 		parry_cooldown_timer -= delta
+	if crit_overload_timer > 0.0:
+		crit_overload_timer -= delta
+
+	process_passive_regen(delta)
 
 	# Movement Logic
 	var input_direction: Vector2 = Vector2(
 		Input.get_axis("Left", "Right"),
 		Input.get_axis("Up", "Down")
 	).normalized()
-	
+
 	if input_direction.length_squared() > 0.0:
 		last_direction = input_direction
 
@@ -120,30 +173,27 @@ func _physics_process(delta: float) -> void:
 	if is_dashing:
 		velocity = last_direction * dash_speed
 	else:
-		velocity = input_direction * move_speed
+		velocity = input_direction * combat_stats.get_move_speed()
 
 	move_and_slide()
 
 	# --- ANIMATION & FACING LOGIC ---
-	if not is_dashing and not is_parrying:
-		# Face the mouse cursor
-		anim.flip_h = (get_global_mouse_position().x < global_position.x)
-		
-		# Basic movement animations
-		if velocity.length_squared() > 0:
-			anim.play("Walk")
-		else:
-			anim.play("Idle")
+	if not is_dashing:
+		var is_facing_left: bool = (get_global_mouse_position().x < global_position.x)
+		anim.flip_h = !is_facing_left
+		parry_hitbox.scale.x = -1 if !is_facing_left else 1
 
-	# --- WEAPON INPUT LOGIC ---
-	var w = get_active_weapon()
-	if w:
-		if Input.is_action_pressed("Left Click"):
-			if w.has_method("fire_weapon"):
-				w.call("fire_weapon", Vector2.ZERO, self)
-		if Input.is_action_just_pressed("Reload"):
-			if w.has_method("reload"):
-				w.call("reload")
+		if not is_parrying:
+			if velocity.length_squared() > 0:
+				anim.play("Walk")
+			else:
+				anim.play("Idle")
+
+
+	if Input.is_action_pressed("Left Click"):
+		weapon_holder.fire()
+	if Input.is_action_just_pressed("Reload"):
+		weapon_holder.reload()
 
 func start_dash(direction: Vector2) -> void:
 	is_dashing = true
@@ -153,17 +203,25 @@ func start_dash(direction: Vector2) -> void:
 	last_direction = direction.normalized() if direction.length_squared() > 0.0 else last_direction
 	modulate.a = 0.6
 	velocity = last_direction * dash_speed
-	
-	# Trigger dash animation and sound
+
 	anim.play("Dash")
 	if audio_dash: audio_dash.play()
+
+	emit_signal("dash_started", dash_cooldown)
 
 func take_damage(amount: int) -> void:
 	if invincibility_timer > 0.0 or health <= 0:
 		return
 
-	health = max(0, health - amount)
-	
+	var effective_evasion: float = combat_stats.get_effective_evasion_chance()
+	if effective_evasion > 0.0 and randf() < effective_evasion:
+		return
+
+	var final_damage: int = max(0, amount - combat_stats.armor_rating)
+	if final_damage <= 0:
+		return
+
+	health = max(0, health - final_damage)
 	invincibility_timer = invincibility_duration
 	modulate.a = 0.6
 
@@ -176,116 +234,158 @@ func take_damage(amount: int) -> void:
 	emit_signal("health_changed", health, max_health)
 
 func heal(amount: int) -> void:
+	if amount <= 0 or health <= 0:
+		return
 	health = min(max_health, health + amount)
 	emit_signal("health_changed", health, max_health)
 
+func process_passive_regen(delta: float) -> void:
+	if combat_stats.passive_regen <= 0.0 or health <= 0 or health >= max_health:
+		passive_regen_bank = 0.0
+		return
+
+	passive_regen_bank += combat_stats.passive_regen * delta
+	var whole_heal := int(passive_regen_bank)
+	if whole_heal <= 0:
+		return
+
+	passive_regen_bank -= whole_heal
+	heal(whole_heal)
+
+func on_enemy_killed(_enemy: Node) -> void:
+	if combat_stats.life_steal <= 0.0:
+		return
+	heal(int(combat_stats.life_steal))
+
+func has_crit_overload_bonus() -> bool:
+	return combat_stats.has_crit_overload and crit_overload_timer > 0.0
+
+func get_crit_overload_bonus() -> float:
+	return crit_overload_bonus if has_crit_overload_bonus() else 0.0
+
 func die() -> void:
 	print("Player died")
-	
-	# Disable physics and inputs while dying
+	is_parrying = false
+	if parry_hitbox:
+		parry_hitbox.set_deferred("monitoring", false)
 	set_physics_process(false)
-	$CollisionShape2D.set_deferred("disabled", true)
-	
-	anim.play("Die")
+	if has_node("CollisionShape2D"):
+		$CollisionShape2D.set_deferred("disabled", true)
+
+	if anim:
+		anim.play("Die")
 	if audio_die: audio_die.play()
-	
-	# Wait for the death animation to finish before deleting the player
-	# If using AnimatedSprite2D, use "animation_finished". If AnimationPlayer, use "animation_finished"
-	await anim.animation_finished 
-	queue_free()
+
+	await get_tree().create_timer(0.5).timeout
+	show_game_over_screen()
+
+func show_game_over_screen() -> void:
+	var canvas = CanvasLayer.new()
+	canvas.process_mode = Node.PROCESS_MODE_ALWAYS
+	canvas.layer = 100
+	canvas.script = load("res://PerryParry/scripts/game_over_screen.gd")
+
+	var color_rect = ColorRect.new()
+	color_rect.process_mode = Node.PROCESS_MODE_ALWAYS
+	color_rect.color = Color(0, 0, 0, 0.7)
+	color_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	canvas.add_child(color_rect)
+
+	var center = CenterContainer.new()
+	center.process_mode = Node.PROCESS_MODE_ALWAYS
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	canvas.add_child(center)
+
+	var vbox = VBoxContainer.new()
+	vbox.process_mode = Node.PROCESS_MODE_ALWAYS
+	vbox.add_theme_constant_override("separation", 20)
+	center.add_child(vbox)
+
+	var title = Label.new()
+	title.process_mode = Node.PROCESS_MODE_ALWAYS
+	title.text = "GAME OVER"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 48)
+	title.add_theme_color_override("font_color", Color.RED)
+	vbox.add_child(title)
+
+	if UpgradeManager != null and UpgradeManager.current_survival_time > 0.0:
+		var time_label = Label.new()
+		time_label.process_mode = Node.PROCESS_MODE_ALWAYS
+		var mins: int = int(UpgradeManager.current_survival_time / 60.0)
+		var secs: float = fmod(UpgradeManager.current_survival_time, 60.0)
+		time_label.text = "SURVIVED: %02d:%04.1f" % [mins, secs]
+		time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		time_label.add_theme_font_size_override("font_size", 28)
+		time_label.add_theme_color_override("font_color", Color(0.2, 0.8, 1.0))
+		vbox.add_child(time_label)
+
+	var restart_btn = Button.new()
+	restart_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+	restart_btn.name = "RestartButton"
+	restart_btn.text = "RESTART"
+	restart_btn.custom_minimum_size = Vector2(200, 50)
+	vbox.add_child(restart_btn)
+
+	var menu_btn = Button.new()
+	menu_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+	menu_btn.name = "MainMenuButton"
+	menu_btn.text = "MAIN MENU"
+	menu_btn.custom_minimum_size = Vector2(200, 50)
+	vbox.add_child(menu_btn)
+
+	get_tree().current_scene.add_child(canvas)
 
 func pick_up_weapon(weapon_stats: Resource) -> bool:
-	for i in range(inventory.size()):
-		if inventory[i] == null:
-			var new_weapon = null
-			if master_weapon_scene:
-				new_weapon = master_weapon_scene.instantiate()
-				new_weapon.stats = weapon_stats
-				add_child(new_weapon)
-			else:
-				new_weapon = weapon_stats
-			
-			inventory[i] = new_weapon
-			active_weapon_index = i
-			
-			if new_weapon is Node and new_weapon.has_signal("ammo_changed") and not new_weapon.ammo_changed.is_connected(_on_weapon_ammo_changed):
-				new_weapon.ammo_changed.connect(_on_weapon_ammo_changed)
-			if new_weapon is Node and new_weapon.has_signal("reload_finished") and not new_weapon.reload_finished.is_connected(_on_weapon_reload_finished):
-				new_weapon.reload_finished.connect(_on_weapon_reload_finished)
-			
-			emit_signal("inventory_changed")
+	for i in range(weapon_inventory.MAX_SLOTS):
+		if weapon_inventory.slots[i] == null:
+			weapon_inventory.equip_weapon(weapon_stats, i)
 			print("Equipped new weapon!")
 			return true
 	
 	print("Inventory is full!")
 	return false
 
+# Hooks up the new weapon's signals dynamically when WeaponHolder creates it
+func _on_weapon_changed(new_weapon: Node2D) -> void:
+	if new_weapon:
+		if new_weapon.has_signal("ammo_changed") and not new_weapon.ammo_changed.is_connected(_on_weapon_ammo_changed):
+			new_weapon.ammo_changed.connect(_on_weapon_ammo_changed)
+		if new_weapon.has_signal("reload_finished") and not new_weapon.reload_finished.is_connected(_on_weapon_reload_finished):
+			new_weapon.reload_finished.connect(_on_weapon_reload_finished)
+
+		# Force an immediate UI update for the newly held weapon
+		if new_weapon.has_method("get_ammo"):
+			var a = new_weapon.call("get_ammo")
+			if typeof(a) == TYPE_DICTIONARY and a.has("current") and a.has("max"):
+				emit_signal("ammo_changed", a["current"], a["max"])
+
 func _on_weapon_ammo_changed(current: int, max: int) -> void:
 	emit_signal("ammo_changed", current, max)
 
 func _on_weapon_reload_finished() -> void:
-	emit_signal("weapon_reloaded", active_weapon_index)
-
-func equip_weapon(index: int) -> void:
-	if index >= 0 and index < inventory.size():
-		if inventory[index] != null:
-			active_weapon_index = index
-			if inventory[active_weapon_index].has_method("on_equip"):
-				inventory[active_weapon_index].call("on_equip")
-				
-			var w = inventory[active_weapon_index]
-			if w.has_signal("ammo_changed") and not w.ammo_changed.is_connected(_on_weapon_ammo_changed):
-				w.ammo_changed.connect(_on_weapon_ammo_changed)
-			if w.has_signal("reload_finished") and not w.reload_finished.is_connected(_on_weapon_reload_finished):
-				w.reload_finished.connect(_on_weapon_reload_finished)
-				
-			if w.has_method("get_ammo"):
-				var a = w.call("get_ammo")
-				if typeof(a) == TYPE_DICTIONARY and a.has("current") and a.has("max"):
-					emit_signal("ammo_changed", a["current"], a["max"])
-			emit_signal("inventory_changed")
-
-func swap_weapon_slots() -> void:
-	var tmp = inventory[0]
-	inventory[0] = inventory[1]
-	inventory[1] = tmp
-	active_weapon_index = 1 if active_weapon_index == 0 else 0
-	equip_weapon(active_weapon_index)
-
-func get_active_weapon():
-	if active_weapon_index >= 0 and active_weapon_index < inventory.size():
-		return inventory[active_weapon_index]
-	return null
+	emit_signal("weapon_reloaded", weapon_inventory.equipped_slot)
 
 func _unhandled_input(_event: InputEvent) -> void:
-	if Input.is_action_pressed("Space") and parry_cooldown_timer <= 0.0 and not is_dashing and health > 0:
+	if Input.is_action_just_pressed("Space") and parry_cooldown_timer <= 0.0 and not is_parrying and not is_dashing and health > 0:
 		execute_parry()
 	if Input.is_action_just_pressed("Q"):
 		drop_active_weapon()
-	elif Input.is_action_just_pressed("E"):
-		var swap_index: int = 1 if active_weapon_index == 0 else 0
-		if inventory[swap_index] != null:
-			equip_weapon(swap_index)
+	elif Input.is_action_just_pressed("Swap_Weapon"):
+		weapon_inventory.swap()
 
 func drop_active_weapon() -> void:
-	var active_weapon = inventory[active_weapon_index]
-	
-	if active_weapon != null:
+	var active_stats = weapon_inventory.slots[weapon_inventory.equipped_slot]
+
+	if active_stats != null:
 		var drop = floor_weapon_scene.instantiate()
 		drop.global_position = global_position
-		
-		if active_weapon is Node2D and "stats" in active_weapon:
-			drop.stats = active_weapon.stats
-		else:
-			drop.stats = active_weapon
+		drop.stats = active_stats
 			
 		get_tree().current_scene.add_child(drop)
-		inventory[active_weapon_index] = null
-		
-		if active_weapon is Node2D:
-			active_weapon.queue_free() 
-			
-		emit_signal("inventory_changed")
+
+		# Clear out the slot in the inventory
+		weapon_inventory.equip_weapon(null, weapon_inventory.equipped_slot)
 		print("Dropped weapon!")
 
 func execute_parry() -> void:
@@ -293,14 +393,17 @@ func execute_parry() -> void:
 	parry_cooldown_timer = parry_cooldown
 	parry_hitbox.set_deferred("monitoring", true)
 	
-	# Trigger parry animation and sound
-	anim.play("Parry")
-	if audio_parry: audio_parry.play()
-	
-	await get_tree().create_timer(parry_duration).timeout
+	modulate = Color(1.0, 0.45, 0.45, modulate.a)
+	emit_signal("parry_started", parry_cooldown)
+	await get_tree().create_timer(get_parry_window()).timeout
 
 	parry_hitbox.set_deferred("monitoring", false)
 	is_parrying = false
+	if not is_dashing and invincibility_timer <= 0.0:
+		modulate = Color(1.0, 1.0, 1.0, modulate.a)
+
+func get_parry_window() -> float:
+	return parry_duration + combat_stats.window_extension
 
 func gain_xp(amount: int) -> void:
 	current_xp += amount
@@ -311,36 +414,191 @@ func gain_xp(amount: int) -> void:
 func level_up() -> void:
 	player_level += 1
 	current_xp -= xp_to_next_level
-	xp_to_next_level = int(xp_to_next_level * 1.35)
+	xp_to_next_level = int(xp_to_next_level * 1.15)
 
-	get_tree().paused = true
-	var screen = upgrade_screen.instantiate()
-	get_tree().current_scene.add_child(screen)
-	screen.open_upgrade_screen(player_upgrades)
-	await screen.upgrade_selected
+	pending_upgrade_queue.append("player")
+
+	if !upgrade_in_progress:
+		process_upgrade_queue()
+
+func process_upgrade_queue() -> void:
+	upgrade_in_progress = true
+
+	while pending_upgrade_queue.size() > 0:
+		var pool_type: String = pending_upgrade_queue.pop_front()
+
+		get_tree().paused = true
+
+		var screen = upgrade_screen.instantiate()
+		get_tree().current_scene.add_child(screen)
+
+		screen.open_upgrade_screen(upgrades, pool_type)
+
+		await screen.upgrade_selected
+
+		rebuild_stats()
+
 	get_tree().paused = false
+	upgrade_in_progress = false
+	invincibility_timer = max(invincibility_timer, 0.5)
+
+func gain_parry_xp(amount: int) -> void:
+	current_parry_xp += amount
+	while current_parry_xp >= parry_xp_to_next:
+		parry_level_up()
+	emit_signal("parry_xp_changed", current_parry_xp, parry_xp_to_next, parry_level)
 
 func parry_level_up() -> void:
 	parry_level += 1
 	current_parry_xp -= parry_xp_to_next
-	parry_xp_to_next = int(parry_xp_to_next * 1.3)
-	upgrade_screen.open_upgrade_screen(player_upgrades)
+	parry_xp_to_next += parries_required_increase + (parry_level * 2)
+
+	pending_upgrade_queue.append("parry")
+
+	if !upgrade_in_progress:
+		process_upgrade_queue()
 
 func _on_parry_hitbox_area_entered(area: Area2D) -> void:
+	if area.get("is_parried") == true or area.get("is_duplicate") == true:
+		return
 	if area.has_method("get_parried"):
 		if area.shooter != self:
+			area.set("is_parried", true)
+			var original_shooter = area.shooter
 			$"ParryHitbox/ParrySparks".restart()
 			deflect_projectile(area)
 			area.get_parried(self)
+			
+			anim.play("Parry")
+			if audio_parry: audio_parry.play()
+			
+			apply_parry_success_effects(area, original_shooter)
+			var parry_xp_gained: int = 1 + max(0, combat_stats.parry_accuracy_level - 10)
+			gain_parry_xp(parry_xp_gained)
 
 func deflect_projectile(bullet: Area2D) -> void:
-	if player_upgrades == null:
-		printerr("Parry Math Failed: Player Upgrades resource not slotted in Inspector!")
+	if upgrades == null:
+		printerr("Parry Math Failed: Upgrades resource not slotted!")
 		return
-		
-	var current_spread: float = max(0.0, 60.0 - (player_upgrades.get_upgrade_level("parry_accuracy", UpgradeData.UpgradeType.CORE) * 6.0))
+
+	bullet.set("is_parried", true)
+	var accuracy_level: int = clamp(combat_stats.parry_accuracy_level, 0, 10)
+	var current_spread: float = max(0.0, 60.0 - (accuracy_level * 6.0))
 	var random_angle_degrees: float = randf_range(-current_spread, current_spread)
 	var random_angle_radians: float = deg_to_rad(random_angle_degrees)
 	
 	bullet.direction = (bullet.direction * -1).rotated(random_angle_radians)
 	bullet.shooter = self
+	spawn_duplicate_parry_bullets(bullet, bullet.direction)
+
+func apply_parry_success_effects(bullet: Area2D, original_shooter) -> void:
+	if combat_stats.has_crit_overload:
+		crit_overload_timer = crit_overload_duration
+	if combat_stats.heal_on_deflect > 0.0:
+		heal(int(combat_stats.heal_on_deflect))
+	if combat_stats.has_explosive:
+		var origin: Vector2 = bullet.global_position if is_instance_valid(bullet) else global_position
+		if is_instance_valid(original_shooter) and original_shooter is Node2D:
+			origin = original_shooter.global_position
+		damage_nearby_enemies(origin, explosive_retaliation_radius, explosive_retaliation_damage, false)
+		spawn_vfx_ring(origin, explosive_retaliation_radius, Color(1.0, 0.35, 0.1, 0.75))
+	if combat_stats.has_shockwave:
+		damage_nearby_enemies(global_position, shockwave_radius, shockwave_damage, true)
+		spawn_vfx_ring(global_position, shockwave_radius, Color(0.1, 0.75, 1.0, 0.75))
+
+func spawn_vfx_ring(center_pos: Vector2, target_radius: float, color: Color) -> void:
+	var scene_root = get_tree().current_scene
+	if scene_root == null:
+		return
+
+	var ring = Node2D.new()
+	ring.global_position = center_pos
+	scene_root.add_child(ring)
+
+	var duration: float = 0.35
+	var tween = ring.create_tween()
+	
+	ring.draw.connect(func():
+		if is_instance_valid(ring):
+			var elapsed: float = tween.get_total_elapsed_time()
+			var progress: float = clamp(elapsed / duration, 0.0, 1.0)
+			var current_radius: float = target_radius * progress
+			var alpha: float = (1.0 - progress) * color.a
+			var fill_color = Color(color.r, color.g, color.b, alpha * 0.4)
+			var line_color = Color(color.r, color.g, color.b, alpha)
+			ring.draw_circle(Vector2.ZERO, current_radius, fill_color)
+			ring.draw_arc(Vector2.ZERO, current_radius, 0, TAU, 32, line_color, 4.0)
+	)
+
+	tween.tween_method(func(_val: float):
+		if is_instance_valid(ring):
+			ring.queue_redraw()
+	, 0.0, 1.0, duration)
+
+	tween.finished.connect(func():
+		if is_instance_valid(ring):
+			ring.queue_free()
+	)
+
+func spawn_duplicate_parry_bullets(bullet: Area2D, base_direction: Vector2) -> void:
+	if combat_stats.duplication_count <= 0:
+		return
+
+	var scene_root = get_tree().current_scene
+	if scene_root == null:
+		return
+
+	var count: int = combat_stats.duplication_count
+	var spread_rad: float = deg_to_rad(parry_duplicate_spread_degrees)
+	for i in range(count):
+		var copy = bullet.duplicate()
+		if copy == null:
+			continue
+		copy.set("is_parried", true)
+		copy.set("is_duplicate", true)
+		var offset_index: float = i - ((count - 1) / 2.0)
+		var angle: float = offset_index * spread_rad
+		copy.global_position = bullet.global_position
+		copy.rotation = bullet.rotation + angle
+		if copy.get("direction") != null:
+			copy.direction = base_direction.rotated(angle)
+		if copy.get("shooter") != null:
+			copy.shooter = self
+		scene_root.call_deferred("add_child", copy)
+
+func damage_nearby_enemies(origin: Vector2, radius: float, amount: int, push: bool) -> void:
+	var scene_root = get_tree().current_scene
+	if scene_root == null:
+		return
+
+	for node in scene_root.find_children("*", "CharacterBody2D", true, false):
+		if node == self or not node.has_method("take_damage"):
+			continue
+		if node.global_position.distance_to(origin) > radius:
+			continue
+
+		node.take_damage(amount)
+		if push and node is CharacterBody2D:
+			var direction: Vector2 = origin.direction_to(node.global_position)
+			if direction.length_squared() > 0.0:
+				node.move_and_collide(direction.normalized() * shockwave_push_distance)
+
+func rebuild_stats():
+	var old_max = max_health
+
+	combat_stats.reset()
+
+	if upgrades:
+		UpgradeManager.apply_all_upgrades(upgrades, combat_stats)
+
+	max_health = combat_stats.get_max_health()
+	move_speed = combat_stats.get_move_speed()
+
+	if max_health > old_max:
+		health += (max_health - old_max)
+
+	var current_weapon = weapon_holder.get_weapon()
+	if current_weapon:
+		current_weapon.refresh_stats()
+
+	health_changed.emit(health, max_health)

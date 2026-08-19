@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://hx03wystig8u"]
+
+[ext_resource type="Script" uid="uid://bd8etpmwloxn8" path="res://PerryParry/scripts/destructible_wall.gd" id="1_307yp"]
+[ext_resource type="Texture2D" uid="uid://bn8cjgws574dm" path="res://PerryParry/assets/tiles/Dungeon/New Piskel.png" id="2_6xaye"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fpe7m"]
+atlas = ExtResource("2_6xaye")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jqc6x"]
+atlas = ExtResource("2_6xaye")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tug6r"]
+atlas = ExtResource("2_6xaye")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dewc6"]
+atlas = ExtResource("2_6xaye")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_t2dwb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fpe7m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jqc6x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tug6r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dewc6")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o1163"]
+size = Vector2(32, 32)
+
+[node name="Destructible_wall" type="StaticBody2D" unique_id=279354126]
+script = ExtResource("1_307yp")
+max_health = 100
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=666131283]
+sprite_frames = SubResource("SpriteFrames_t2dwb")
+frame_progress = 0.4791571
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=540305648]
+shape = SubResource("RectangleShape2D_o1163")

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://bwx03a2m1secs"]
+
+[ext_resource type="Script" uid="uid://dxy6j5tfoppal" path="res://PerryParry/scripts/weapon_stats.gd" id="1_fb2tt"]
+[ext_resource type="Texture2D" uid="uid://0j5vx3ed5xpv" path="res://PerryParry/assets/Bullets/RifleAmmoBig.png" id="1_n3dwt"]
+[ext_resource type="AudioStream" uid="uid://qylr6tqntnso" path="res://PerryParry/assets/audio/guns/gun3.mp3" id="2_rnwhr"]
+[ext_resource type="PackedScene" uid="uid://6jayo0nooeje" path="res://PerryParry/scenes/rifle_ammo.tscn" id="3_8jbuj"]
+[ext_resource type="Texture2D" uid="uid://db0k1ukh4cqvo" path="res://PerryParry/assets/Guns/AK47.png" id="5_mqt47"]
+
+[resource]
+script = ExtResource("1_fb2tt")
+weapon_name = "AK47"
+weapon_type = 1
+weapon_texture = ExtResource("5_mqt47")
+projectile_scene = ExtResource("3_8jbuj")
+muzzle_position = Vector2(15, -3)
+rarity = 4
+rarity_color = Color(1, 0.9411765, 0.05882353, 1)
+ammo_icon = ExtResource("1_n3dwt")
+fire_sound = ExtResource("2_rnwhr")
+damage = 15.0
+fire_rate = 8.0
+magazine_size = 30
+reload_time = 1.5
+metadata/_custom_type_script = "uid://dxy6j5tfoppal"

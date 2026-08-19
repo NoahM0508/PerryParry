@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://c5pqwl860ekme"]
+
+[ext_resource type="Script" uid="uid://dfsk0irv3yjgn" path="res://PerryParry/scripts/cooldown_panel.gd" id="1_k3xwu"]
+[ext_resource type="PackedScene" uid="uid://b7buq1fd7qmsm" path="res://PerryParry/scenes/cooldown_icon.tscn" id="2_y5et7"]
+
+[node name="CooldownPanel" type="PanelContainer" unique_id=459321251]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_k3xwu")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1986312475]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="Parry" parent="HBoxContainer" unique_id=1689112646 instance=ExtResource("2_y5et7")]
+layout_mode = 2
+
+[node name="Dash" parent="HBoxContainer" unique_id=90432023 instance=ExtResource("2_y5et7")]
+layout_mode = 2

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://2d7r6i2rtqyj"
+path="res://.godot/imported/enemy die.mp3-e6a7a6127ecd719cbc1c9837f43d4363.mp3str"
+
+[deps]
+
+source_file="res://PerryParry/assets/audio/enemy audio/enemy die.mp3"
+dest_files=["res://.godot/imported/enemy die.mp3-e6a7a6127ecd719cbc1c9837f43d4363.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

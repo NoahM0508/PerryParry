@@ -1,128 +1,183 @@
-[gd_scene format=3 uid="uid://c24ck56d4jh43"]
+[gd_scene format=3 uid="uid://d3sc8ray20sai"]
 
-[ext_resource type="Script" uid="uid://bs2ejrjgrgdry" path="res://PerryParry/scripts/hud.gd" id="1_ey80o"]
-[ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/Extra/BoldPixels.ttf" id="2_gaxqa"]
+[ext_resource type="PackedScene" uid="uid://bf1c1ntsecik2" path="res://PerryParry/scenes/health_panel.tscn" id="1_50c0h"]
+[ext_resource type="Script" uid="uid://bs2ejrjgrgdry" path="res://PerryParry/scripts/hud.gd" id="1_gqv5s"]
+[ext_resource type="PackedScene" uid="uid://6k3uhesq7mh3" path="res://PerryParry/scenes/xp_panel.tscn" id="2_7cmbb"]
+[ext_resource type="PackedScene" uid="uid://c5pqwl860ekme" path="res://PerryParry/scenes/cooldown_panel.tscn" id="2_7g0iq"]
+[ext_resource type="PackedScene" uid="uid://cwdrc3cjicw1y" path="res://PerryParry/scenes/weapon_inventory_panel.tscn" id="5_5mnik"]
+[ext_resource type="PackedScene" uid="uid://cvjnf00ekqf4b" path="res://PerryParry/scenes/ammo_panel.tscn" id="6_j7t1i"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t2dwb"]
-bg_color = Color(0, 0, 0, 0)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color(0.6535996, 0, 0.14216882, 0.39607844)
-border_blend = true
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+[node name="HUD" type="CanvasLayer" unique_id=768987945]
+script = ExtResource("1_gqv5s")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4jc07"]
-bg_color = Color(0, 0, 0, 0)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color(0.20392157, 0.91764706, 0.8156863, 0.49019608)
-border_blend = true
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+[node name="Control" type="Control" parent="." unique_id=607144829]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0j781"]
-bg_color = Color(0, 0, 0, 0)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color(0.8, 0.8, 0, 1)
-border_blend = true
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+[node name="TopRight" type="MarginContainer" parent="Control" unique_id=17421420]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -171.0
+offset_bottom = 110.0
+grow_horizontal = 0
+offset_transform_enabled = true
+offset_transform_position = Vector2(-34.07, 11.76)
+offset_transform_scale = Vector2(1.28, 1.28)
 
-[node name="CanvasLayer" type="CanvasLayer" unique_id=1991628657]
-script = ExtResource("1_ey80o")
+[node name="XPPanel" parent="Control/TopRight" unique_id=1885449737 instance=ExtResource("2_7cmbb")]
+unique_name_in_owner = true
+layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1825262768]
+[node name="TopLeft" type="MarginContainer" parent="Control" unique_id=2068317173]
+custom_minimum_size = Vector2(350, 120)
+layout_mode = 1
+offset_right = 350.0
+offset_bottom = 120.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/TopLeft" unique_id=1221403235]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/TopLeft/MarginContainer" unique_id=1817847938]
+layout_mode = 2
+size_flags_horizontal = 0
+offset_transform_enabled = true
+offset_transform_position = Vector2(36.21, 9.735)
+offset_transform_scale = Vector2(2.015, 2.015)
+
+[node name="HealthPanel" parent="Control/TopLeft/MarginContainer/VBoxContainer" unique_id=1312514707 instance=ExtResource("1_50c0h")]
+unique_name_in_owner = true
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(4.96, 0)
+
+[node name="CooldownPanel" parent="Control/TopLeft/MarginContainer/VBoxContainer" unique_id=459321251 instance=ExtResource("2_7g0iq")]
+unique_name_in_owner = true
+layout_mode = 2
+offset_transform_enabled = true
+
+[node name="BottomLeft" type="MarginContainer" parent="Control" unique_id=19763155]
+custom_minimum_size = Vector2(400, 120)
+layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -151.0
-offset_right = 126.0
-offset_bottom = -31.0
+offset_top = -178.0
+offset_right = 400.0
 grow_vertical = 0
-scale = Vector2(1.565, 1.565)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1225172617]
+[node name="MarginContainer" type="MarginContainer" parent="Control/BottomLeft" unique_id=1704664415]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="Health Panel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1179154285]
+[node name="VBoxContainer" type="HBoxContainer" parent="Control/BottomLeft/MarginContainer" unique_id=1972249238]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_t2dwb")
+size_flags_horizontal = 0
+size_flags_vertical = 4
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/Health Panel" unique_id=1564803369]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Health Panel/MarginContainer" unique_id=1988284632]
-layout_mode = 2
-alignment = 2
-
-[node name="HealthBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/Health Panel/MarginContainer/VBoxContainer" unique_id=1818669603]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-
-[node name="HealthLabel" type="Label" parent="MarginContainer/VBoxContainer/Health Panel/MarginContainer/VBoxContainer/HealthBar" unique_id=145806170]
-layout_mode = 0
-offset_left = 49.0
-offset_top = -18.0
-offset_right = 102.348236
-offset_bottom = -4.0
-size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("2_gaxqa")
-
-[node name="WeaponPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1246911333]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_4jc07")
-
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/WeaponPanel" unique_id=1967579234]
+[node name="WeaponInventoryPanel" parent="Control/BottomLeft/MarginContainer/VBoxContainer" unique_id=1380439282 instance=ExtResource("5_5mnik")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/WeaponPanel/MarginContainer" unique_id=1996055470]
+[node name="AmmoPanel" parent="Control/BottomLeft/MarginContainer/VBoxContainer" unique_id=842650773 instance=ExtResource("6_j7t1i")]
+unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 4
+offset_transform_enabled = true
+offset_transform_position = Vector2(34.565, 5.205)
+offset_transform_scale = Vector2(1.44, 1.44)
 
-[node name="WeaponIconPanel" type="Panel" parent="MarginContainer/VBoxContainer/WeaponPanel/MarginContainer/HBoxContainer" unique_id=1766332790]
-layout_mode = 2
+[node name="Overlay" type="Control" parent="Control" unique_id=882238175]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="WeaponSprite" type="TextureRect" parent="MarginContainer/VBoxContainer/WeaponPanel/MarginContainer/HBoxContainer" unique_id=800080444]
-layout_mode = 2
-expand_mode = 3
+[node name="TopCenter" type="MarginContainer" parent="Control" unique_id=992837164]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 10.0
+offset_right = 200.0
+offset_bottom = 110.0
+grow_horizontal = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/WeaponPanel/MarginContainer/HBoxContainer" unique_id=1535542815]
+[node name="VBox" type="VBoxContainer" parent="Control/TopCenter" unique_id=123984712]
 layout_mode = 2
 alignment = 1
 
-[node name="WeaponName" type="Label" parent="MarginContainer/VBoxContainer/WeaponPanel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1900275015]
+[node name="WaveLabel" type="Label" parent="Control/TopCenter/VBox" unique_id=98712345]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_gaxqa")
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 24
+text = "WAVE 1/1 - ENEMIES: 0"
+horizontal_alignment = 1
 
-[node name="Ammo Panel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=2144999662]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_0j781")
-
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/Ammo Panel" unique_id=1838123465]
+[node name="BossBox" type="VBoxContainer" parent="Control/TopCenter/VBox" unique_id=54321987]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Ammo Panel/MarginContainer" unique_id=1369082759]
+[node name="BossNameLabel" type="Label" parent="Control/TopCenter/VBox/BossBox" unique_id=11223344]
+unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 22
+text = "FINAL BOSS"
+horizontal_alignment = 1
 
-[node name="AmmoIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/Ammo Panel/MarginContainer/HBoxContainer" unique_id=1766031617]
+[node name="BossProgressBar" type="ProgressBar" parent="Control/TopCenter/VBox/BossBox" unique_id=55667788]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 20)
 layout_mode = 2
-expand_mode = 2
+step = 1.0
+value = 100.0
 
-[node name="AmmoLabel" type="Label" parent="MarginContainer/VBoxContainer/Ammo Panel/MarginContainer/HBoxContainer" unique_id=1161593914]
+[node name="SurvivalLabel" type="Label" parent="Control/TopCenter/VBox" unique_id=33445566]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_gaxqa")
+theme_override_colors/font_color = Color(0.2, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "SURVIVAL TIME: 00:00.0"
+horizontal_alignment = 1
+
+[node name="BannerLabel" type="Label" parent="Control" unique_id=77889900]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -40.0
+offset_right = 350.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 36
+text = "Defeat the 2 trial chambers before entering"
+horizontal_alignment = 1
+vertical_alignment = 1

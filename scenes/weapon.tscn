@@ -10,7 +10,7 @@ reload_texture = ExtResource("2_rkivl")
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=332960833]
 
 [node name="Muzzle" type="Node2D" parent="." unique_id=912255123]
-position = Vector2(15, -3)
+position = Vector2(17, -2)
 
 [node name="FireTimer" type="Timer" parent="." unique_id=1928895639]
 

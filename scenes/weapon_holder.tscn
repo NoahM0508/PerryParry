@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://8t6mnt06l6ow"]
+
+[ext_resource type="Script" uid="uid://nmj31p4xkpqv" path="res://PerryParry/scripts/weapon_holder.gd" id="1_igvtg"]
+
+[node name="WeaponHolder" type="Node2D" unique_id=989569735]
+script = ExtResource("1_igvtg")

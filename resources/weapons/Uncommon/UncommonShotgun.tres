@@ -2,19 +2,21 @@
 
 [ext_resource type="Texture2D" uid="uid://b5xknj4hjn33t" path="res://PerryParry/assets/Bullets/ShotgunShellSmall.png" id="1_37pu2"]
 [ext_resource type="PackedScene" uid="uid://dyac5xh1bgv3s" path="res://PerryParry/scenes/shotgun_shell.tscn" id="2_37pu2"]
+[ext_resource type="AudioStream" uid="uid://jwvwrxfkm6vd" path="res://PerryParry/assets/audio/guns/shotgun.mp3" id="2_tlmjk"]
 [ext_resource type="Script" uid="uid://dxy6j5tfoppal" path="res://PerryParry/scripts/weapon_stats.gd" id="3_oy6oq"]
 [ext_resource type="Texture2D" uid="uid://byy16gvo6curn" path="res://PerryParry/assets/Guns/SawedOffShotgun.png" id="4_rqo4t"]
 
 [resource]
 script = ExtResource("3_oy6oq")
-weapon_name = "Shotgun"
-weapon_type = "Shotgun"
+weapon_name = "Trench Shotgun"
+weapon_type = 2
 weapon_texture = ExtResource("4_rqo4t")
 projectile_scene = ExtResource("2_37pu2")
-muzzle_position = Vector2(13, -2)
+muzzle_position = Vector2(13, -3)
 rarity = 1
 rarity_color = Color(0.10768963, 0.60747916, 7.70092e-07, 1)
 ammo_icon = ExtResource("1_37pu2")
+fire_sound = ExtResource("2_tlmjk")
 fire_pattern = 1
 damage = 5.0
 fire_rate = 1.5

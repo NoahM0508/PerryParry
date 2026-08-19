@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="CombatStats" format=3 uid="uid://dv511gw0a456d"]
+
+[ext_resource type="Script" uid="uid://dhd4vqwsjrhct" path="res://PerryParry/scripts/CombatStats.gd" id="1_xo1bo"]
+
+[resource]
+script = ExtResource("1_xo1bo")
+metadata/_custom_type_script = "uid://dhd4vqwsjrhct"

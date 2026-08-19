@@ -16,18 +16,38 @@ grow_vertical = 2
 color = Color(0.23921569, 0.23921569, 0.23921569, 0.63529414)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ColorRect" unique_id=1491969855]
-layout_mode = 0
-offset_left = 4.0
-offset_top = 6.0
-offset_right = 117.0
-offset_bottom = 72.0
-scale = Vector2(10.161287, 9.751206)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -80.0
+offset_right = 100.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
 alignment = 1
 
 [node name="ResumeButton" type="Button" parent="ColorRect/VBoxContainer" unique_id=1984307326]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_kixq6")
 text = "Resume"
+
+[node name="VolumeLabel" type="Label" parent="ColorRect/VBoxContainer" unique_id=987123]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_kixq6")
+text = "Music Vol"
+horizontal_alignment = 1
+
+[node name="MusicSlider" type="HSlider" parent="ColorRect/VBoxContainer" unique_id=123987]
+custom_minimum_size = Vector2(180, 20)
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 1.0
 
 [node name="QuitToMenuButton" type="Button" parent="ColorRect/VBoxContainer" unique_id=1916534552]
 layout_mode = 2

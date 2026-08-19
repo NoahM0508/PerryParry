@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://b7buq1fd7qmsm"]
+
+[ext_resource type="Script" uid="uid://dqd8s66rxkdox" path="res://PerryParry/scripts/cooldown_icon.gd" id="1_j2vp2"]
+[ext_resource type="Texture2D" uid="uid://cotfrvrvbqrw1" path="res://PerryParry/assets/UI/SimplePixelArtUIpack/Artwork/ColorCustomizible/rounded/Slot3D_rounded_CC.png" id="2_nsvnq"]
+[ext_resource type="Texture2D" uid="uid://cbdxfstxom7b2" path="res://PerryParry/assets/Icons/CritIcon.png" id="3_nsvnq"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_qnbuc"]
+
+[sub_resource type="Animation" id="Animation_8iaeh"]
+resource_name = "ReadyFlash"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6blce"]
+_data = {
+&"ReadyFlash": SubResource("Animation_8iaeh")
+}
+
+[node name="CooldownIcon" type="Control" unique_id=1689112646]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_j2vp2")
+
+[node name="CooldownOverlay" type="TextureProgressBar" parent="." unique_id=1598668197]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+max_value = 1.0
+step = 0.1
+value = 1.0
+fill_mode = 4
+texture_under = ExtResource("2_nsvnq")
+texture_over = ExtResource("2_nsvnq")
+texture_progress = ExtResource("2_nsvnq")
+texture_progress_offset = Vector2(-0.62, -1.045)
+tint_under = Color(0, 0, 0, 0.42745098)
+tint_over = Color(0, 0, 0, 0.13725491)
+tint_progress = Color(0, 0, 0.94509804, 1)
+
+[node name="TimerLabel" type="Label" parent="." unique_id=594385697]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+offset_right = 40.0
+grow_vertical = 0
+label_settings = SubResource("LabelSettings_qnbuc")
+
+[node name="Icon" type="TextureRect" parent="." unique_id=494321158]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 0
+offset_left = -8.000001
+offset_right = 56.0
+offset_bottom = 64.0
+scale = Vector2(0.405, 0.405)
+texture = ExtResource("3_nsvnq")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1625411415]
+libraries/ = SubResource("AnimationLibrary_6blce")

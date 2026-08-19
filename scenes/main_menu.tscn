@@ -1,7 +1,16 @@
 [gd_scene format=3 uid="uid://c0lv5p1o1uffx"]
 
 [ext_resource type="Script" uid="uid://cw8eqaaeexg5" path="res://PerryParry/scripts/main_menu.gd" id="1_cu2ow"]
+[ext_resource type="Texture2D" uid="uid://b24lpuvr1cete" path="res://PerryParry/assets/Perry/Perry_Flinch.png" id="2_kxjt6"]
 [ext_resource type="FontFile" uid="uid://eblowcl0k1ie" path="res://PerryParry/assets/Extra/BoldPixels.ttf" id="2_rssxq"]
+[ext_resource type="Texture2D" uid="uid://da40u5rcy1oi" path="res://PerryParry/assets/Guns/Revolver.png" id="4_5j1fw"]
+[ext_resource type="Texture2D" uid="uid://cmpsn1i1tvkql" path="res://PerryParry/assets/Guns/Pack 2/2px/2.png" id="5_wqwlw"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_t2dwb"]
+font_size = 70
+font_color = Color(0.80784315, 0, 1, 1)
+shadow_size = 13
+shadow_color = Color(0, 0, 0, 1)
 
 [node name="Main Menu" type="Control" unique_id=634458067]
 layout_mode = 3
@@ -20,7 +29,25 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(4.110854, 3.2174795)
-color = Color(0.1187192, 0.27261528, 0.4406253, 1)
+color = Color(0.3079928, 0.19131029, 0.48308563, 1)
+
+[node name="TextureRect2" type="TextureRect" parent="." unique_id=1153303966]
+layout_mode = 0
+offset_left = 327.0
+offset_right = 842.0
+offset_bottom = 351.0
+texture = ExtResource("2_kxjt6")
+
+[node name="Label" type="Label" parent="." unique_id=1374022398]
+layout_mode = 0
+offset_left = 316.245
+offset_top = 180.5
+offset_right = 835.245
+offset_bottom = 243.5
+text = "Parry Perry"
+label_settings = SubResource("LabelSettings_t2dwb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1834856205]
 layout_mode = 1
@@ -29,13 +56,14 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -259.755
-offset_top = -130.0
-offset_right = 259.245
-offset_bottom = 134.0
+offset_left = -265.0
+offset_top = -26.0
+offset_right = 254.0
+offset_bottom = 238.0
 grow_horizontal = 2
 grow_vertical = 2
 offset_transform_rotation = 3.5901423
+theme_override_constants/separation = 54
 alignment = 1
 
 [node name="StartButton" type="Button" parent="VBoxContainer" unique_id=246256970]
@@ -55,17 +83,77 @@ theme_override_fonts/font = ExtResource("2_rssxq")
 text = "Quit"
 
 [node name="OptionsMenu" type="Control" parent="." unique_id=463788122]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="ColorRect" type="ColorRect" parent="OptionsMenu" unique_id=244661741]
-visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.075, 0, 0.2, 0.9)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="OptionsMenu" unique_id=987654321]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -60.0
+offset_right = 150.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="VolumeLabel" type="Label" parent="OptionsMenu/VBoxContainer" unique_id=11223344]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_rssxq")
+theme_override_font_sizes/font_size = 24
+text = "Music Volume"
+horizontal_alignment = 1
+
+[node name="MusicSlider" type="HSlider" parent="OptionsMenu/VBoxContainer" unique_id=55667788]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="BackButton" type="Button" parent="OptionsMenu/VBoxContainer" unique_id=99001122]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_rssxq")
+text = "Back"
+
+[node name="Revolver" type="TextureRect" parent="." unique_id=921134258]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-color = Color(0.07497903, 1.4198572e-06, 0.40693584, 1)
+offset_left = 64.999985
+offset_top = 94.00001
+offset_right = 80.999985
+offset_bottom = 110.00001
+scale = Vector2(18.25, 15)
+texture = ExtResource("4_5j1fw")
+
+[node name="2" type="TextureRect" parent="." unique_id=168517083]
+layout_mode = 0
+offset_left = 846.00006
+offset_top = 78.999985
+offset_right = 873.00006
+offset_bottom = 97.999985
+scale = Vector2(10.055555, 9.973684)
+texture = ExtResource("5_wqwlw")
+flip_h = true
 
 [connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/OptionsButton" to="." method="_on_options_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="OptionsMenu/VBoxContainer/BackButton" to="." method="_on_back_button_pressed"]

@@ -19,11 +19,17 @@ extends CharacterBody2D
 @export var floor_weapon_scene: PackedScene 
 
 @export_category("Parry Settings")
-@export var parry_duration: float = 0.9  
-@export var parry_cooldown: float = 0.1  
+@export var parry_duration: float = 0.22
+@export var parry_whiff_cooldown: float = 0.55
 @export var parry_xp_reward: int = 5
 @export var parries_for_level_two: int = 8
 @export var parries_required_increase: int = 4
+
+@export_category("Parry Cone & Aiming")
+@export var base_parry_cone_angle: float = 90.0   ## Full cone width in degrees
+@export var parry_range: float = 80.0              ## Pixel reach of the cone
+@export var sweet_spot_angle: float = 20.0         ## Center wedge for Perfect Parry
+@export var sweet_spot_window: float = 0.08        ## Seconds at start for Perfect Parry
 
 @export_category("Parry Effects")
 @export var crit_overload_duration: float = 1.0
@@ -34,11 +40,19 @@ extends CharacterBody2D
 @export var shockwave_radius: float = 90.0
 @export var shockwave_damage: int = 12
 @export var shockwave_push_distance: float = 32.0
+@export var perfect_parry_damage_multiplier: float = 2.5
+
+@export_category("Parry Combo")
+@export var combo_timeout: float = 1.5           ## Seconds before combo resets
+@export var combo_max_stacks: int = 5
+@export var combo_damage_per_stack: float = 0.15  ## +15% deflection damage per stack
+@export var combo_speed_per_stack: float = 0.05   ## +5% move speed per stack
 
 @export var upgrades: PlayerUpgrades
 @export var hud: CanvasLayer
 
 @onready var parry_hitbox: Area2D = $ParryHitbox
+@onready var parry_arc_visual: Node2D = $ParryArcVisual
 @onready var dash_particles = $DashParticles2D
 @onready var combat_stats: CombatStats = $Combat_stats
 
@@ -80,6 +94,16 @@ var pending_upgrade_queue: Array[String] = []
 var upgrade_in_progress: bool = false
 var passive_regen_bank: float = 0.0
 var crit_overload_timer: float = 0.0
+
+# --- DIRECTIONAL PARRY STATE ---
+var parry_aim_direction: Vector2 = Vector2.RIGHT
+var parried_in_current_window: bool = false
+var parry_active_timer: float = 0.0   ## Counts UP from 0 during active parry window
+var is_perfect_parry: bool = false
+
+# --- PARRY COMBO STATE ---
+var combo_count: int = 0
+var combo_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -151,6 +175,16 @@ func _physics_process(delta: float) -> void:
 	if crit_overload_timer > 0.0:
 		crit_overload_timer -= delta
 
+	# Track how long parry has been active (for sweet spot window detection)
+	if is_parrying:
+		parry_active_timer += delta
+
+	# Combo timer decay
+	if combo_timer > 0.0:
+		combo_timer -= delta
+		if combo_timer <= 0.0:
+			combo_count = 0
+
 	process_passive_regen(delta)
 
 	# Movement Logic
@@ -173,7 +207,8 @@ func _physics_process(delta: float) -> void:
 	if is_dashing:
 		velocity = last_direction * dash_speed
 	else:
-		velocity = input_direction * combat_stats.get_move_speed()
+		var speed_bonus: float = 1.0 + (combo_count * combo_speed_per_stack)
+		velocity = input_direction * combat_stats.get_move_speed() * speed_bonus
 
 	move_and_slide()
 
@@ -181,7 +216,6 @@ func _physics_process(delta: float) -> void:
 	if not is_dashing:
 		var is_facing_left: bool = (get_global_mouse_position().x < global_position.x)
 		anim.flip_h = !is_facing_left
-		parry_hitbox.scale.x = -1 if !is_facing_left else 1
 
 		if not is_parrying:
 			if velocity.length_squared() > 0:
@@ -390,20 +424,114 @@ func drop_active_weapon() -> void:
 
 func execute_parry() -> void:
 	is_parrying = true
-	parry_cooldown_timer = parry_cooldown
+	parried_in_current_window = false
+	parry_active_timer = 0.0
+	is_perfect_parry = false
+
+	# Record the aim direction toward the cursor at the moment of activation
+	var mouse_pos = get_global_mouse_position()
+	parry_aim_direction = global_position.direction_to(mouse_pos)
+	if parry_aim_direction.length_squared() == 0.0:
+		parry_aim_direction = Vector2.RIGHT
+
 	parry_hitbox.set_deferred("monitoring", true)
-	
+
 	modulate = Color(1.0, 0.45, 0.45, modulate.a)
-	emit_signal("parry_started", parry_cooldown)
+	emit_signal("parry_started", parry_whiff_cooldown)
+
+	# Activate the procedural arc visual
+	if parry_arc_visual and parry_arc_visual.has_method("activate"):
+		parry_arc_visual.activate(
+			parry_aim_direction,
+			get_current_cone_angle(),
+			parry_range,
+			sweet_spot_angle
+		)
+
+	anim.play("Parry")
+	if audio_parry: audio_parry.play()
+
 	await get_tree().create_timer(get_parry_window()).timeout
 
+	# --- Parry window expired ---
 	parry_hitbox.set_deferred("monitoring", false)
 	is_parrying = false
+
+	# Deactivate the arc visual
+	if parry_arc_visual and parry_arc_visual.has_method("deactivate"):
+		parry_arc_visual.deactivate()
+
 	if not is_dashing and invincibility_timer <= 0.0:
 		modulate = Color(1.0, 1.0, 1.0, modulate.a)
 
+	# --- WHIFF PENALTY: If nothing was parried, apply the long cooldown ---
+	if not parried_in_current_window:
+		parry_cooldown_timer = parry_whiff_cooldown
+	# If something WAS parried, cooldown was already reset to 0.0 inside the
+	# deflection handler, so the player can immediately parry again.
+
 func get_parry_window() -> float:
 	return parry_duration + combat_stats.window_extension
+
+func get_current_cone_angle() -> float:
+	## Returns the current cone angle in degrees, narrowed by parry_accuracy upgrades.
+	## Each parry_accuracy level narrows the cone by 6 degrees (matching the old spread reduction).
+	var narrowing: float = combat_stats.parry_accuracy_level * 6.0
+	return max(20.0, base_parry_cone_angle - narrowing)
+
+func is_in_parry_cone(target_position: Vector2) -> bool:
+	## Check if a target position falls within the current directional parry cone.
+	var to_target: Vector2 = global_position.direction_to(target_position)
+	var angle_diff: float = abs(parry_aim_direction.angle_to(to_target))
+	var half_cone_rad: float = deg_to_rad(get_current_cone_angle() / 2.0)
+	var distance: float = global_position.distance_to(target_position)
+	return angle_diff <= half_cone_rad and distance <= parry_range
+
+func check_perfect_parry(target_position: Vector2) -> bool:
+	## Returns true if this deflection qualifies as a Perfect Parry.
+	## Condition 1: Within the first sweet_spot_window seconds of activation.
+	## Condition 2: OR target is within the center sweet_spot_angle degrees.
+	if parry_active_timer <= sweet_spot_window:
+		return true
+	var to_target: Vector2 = global_position.direction_to(target_position)
+	var angle_diff: float = abs(parry_aim_direction.angle_to(to_target))
+	var half_sweet_rad: float = deg_to_rad(sweet_spot_angle / 2.0)
+	return angle_diff <= half_sweet_rad
+
+func increment_combo() -> void:
+	combo_count = min(combo_count + 1, combo_max_stacks)
+	combo_timer = combo_timeout
+	spawn_combo_popup()
+
+func spawn_combo_popup() -> void:
+	## Spawns a floating combo text above the player.
+	if combo_count < 2:
+		return
+
+	var popup = Label.new()
+	popup.text = "x%d COMBO!" % combo_count
+	popup.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	popup.add_theme_font_size_override("font_size", 18 + (combo_count * 2))
+
+	# Color escalates with combo count
+	var t: float = float(combo_count - 1) / float(max(1, combo_max_stacks - 1))
+	popup.add_theme_color_override("font_color", Color(1.0, 1.0 - t * 0.6, 0.2, 1.0))
+
+	popup.global_position = global_position + Vector2(-40, -50)
+	popup.z_index = 200
+
+	get_tree().current_scene.add_child(popup)
+
+	# Animate the popup floating up and fading out
+	var tween = popup.create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(popup, "position:y", popup.position.y - 40, 0.6)
+	tween.tween_property(popup, "modulate:a", 0.0, 0.6)
+	tween.chain().tween_callback(popup.queue_free)
+
+func get_combo_damage_multiplier() -> float:
+	## Returns the current combo damage bonus as a multiplier (1.0 = no bonus).
+	return 1.0 + (combo_count * combo_damage_per_stack)
 
 func gain_xp(amount: int) -> void:
 	current_xp += amount
@@ -461,20 +589,39 @@ func parry_level_up() -> void:
 func _on_parry_hitbox_area_entered(area: Area2D) -> void:
 	if area.get("is_parried") == true or area.get("is_duplicate") == true:
 		return
-	if area.has_method("get_parried"):
-		if area.shooter != self:
-			area.set("is_parried", true)
-			var original_shooter = area.shooter
-			$"ParryHitbox/ParrySparks".restart()
-			deflect_projectile(area)
-			area.get_parried(self)
-			
-			anim.play("Parry")
-			if audio_parry: audio_parry.play()
-			
-			apply_parry_success_effects(area, original_shooter)
-			var parry_xp_gained: int = 1 + max(0, combat_stats.parry_accuracy_level - 10)
-			gain_parry_xp(parry_xp_gained)
+	if not area.has_method("get_parried"):
+		return
+	if area.shooter == self:
+		return
+
+	# --- DIRECTIONAL CONE CHECK ---
+	# Bullet must be within the parry cone aimed at the cursor
+	if not is_in_parry_cone(area.global_position):
+		return
+
+	area.set("is_parried", true)
+	var original_shooter = area.shooter
+	$"ParryHitbox/ParrySparks".restart()
+
+	# Check for Perfect Parry BEFORE deflecting
+	is_perfect_parry = check_perfect_parry(area.global_position)
+
+	deflect_projectile(area)
+	area.get_parried(self)
+
+	apply_parry_success_effects(area, original_shooter)
+
+	# --- CHAIN PARRY: Reset cooldown instantly on successful deflection ---
+	parried_in_current_window = true
+	parry_cooldown_timer = 0.0
+
+	# --- COMBO SYSTEM ---
+	increment_combo()
+
+	var parry_xp_gained: int = 1 + max(0, combat_stats.parry_accuracy_level - 10)
+	if is_perfect_parry:
+		parry_xp_gained += 1  # Bonus XP for perfect parries
+	gain_parry_xp(parry_xp_gained)
 
 func deflect_projectile(bullet: Area2D) -> void:
 	if upgrades == null:
@@ -482,13 +629,31 @@ func deflect_projectile(bullet: Area2D) -> void:
 		return
 
 	bullet.set("is_parried", true)
+
+	# --- DEFLECTION DIRECTION: Aim toward the parry cone direction with accuracy spread ---
 	var accuracy_level: int = clamp(combat_stats.parry_accuracy_level, 0, 10)
 	var current_spread: float = max(0.0, 60.0 - (accuracy_level * 6.0))
 	var random_angle_degrees: float = randf_range(-current_spread, current_spread)
 	var random_angle_radians: float = deg_to_rad(random_angle_degrees)
-	
-	bullet.direction = (bullet.direction * -1).rotated(random_angle_radians)
+
+	# Deflect toward where the player is aiming (cursor) instead of just reversing
+	bullet.direction = parry_aim_direction.rotated(random_angle_radians)
 	bullet.shooter = self
+
+	# --- COMBO DAMAGE BONUS ---
+	var damage_mult: float = get_combo_damage_multiplier()
+
+	# --- PERFECT PARRY BONUS ---
+	if is_perfect_parry:
+		damage_mult *= perfect_parry_damage_multiplier
+		# Perfect parries grant piercing
+		if bullet.get("piercing_remaining") != null:
+			bullet.piercing_remaining += 2
+
+	# Apply damage scaling to the deflected bullet
+	if bullet.get("damage") != null:
+		bullet.damage = int(bullet.damage * damage_mult)
+
 	spawn_duplicate_parry_bullets(bullet, bullet.direction)
 
 func apply_parry_success_effects(bullet: Area2D, original_shooter) -> void:

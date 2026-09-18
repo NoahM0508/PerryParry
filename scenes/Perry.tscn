@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bpo3llmsqsjmi" path="res://PerryParry/scripts/Perry.gd" id="1_dwos7"]
 [ext_resource type="PackedScene" uid="uid://c64xjkaf02y3k" path="res://PerryParry/scenes/weapon.tscn" id="2_dbm6c"]
-[ext_resource type="Resource" uid="uid://dsparlinftjmx" path="res://PerryParry/resources/weapons/Common/starter_pistol.tres" id="2_up5sf"]
+[ext_resource type="Resource" uid="uid://beklohasi8orj" path="res://PerryParry/resources/weapons/Mythic/EnergyPistol.tres" id="2_up5sf"]
 [ext_resource type="PackedScene" uid="uid://eavcnieyqfhu" path="res://PerryParry/scenes/floor_weapon.tscn" id="4_dbm6c"]
 [ext_resource type="Script" uid="uid://cr3xaj5k1grod" path="res://PerryParry/scripts/player_upgrades.gd" id="4_eeavq"]
 [ext_resource type="Texture2D" uid="uid://8n8tbu0hup2h" path="res://PerryParry/assets/brackeys_vfx_bundle/particles/alpha/magic_03_a.png" id="6_dkvs5"]

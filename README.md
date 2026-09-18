@@ -97,14 +97,35 @@ perry-parry/
 
 ---
 
-## 🗺️ Roadmap & Upcoming Features
+## 🗺️ Restructured Roadmap (Code-First)
 
-- [ ] **Home UI & Main Menu Polish**: Full pixel-art menu overhaul with animated background, character mascot preview, and sound effects.
-- [ ] **Comprehensive Settings Menu**: Master, SFX, and Music volume controls, window modes (Fullscreen / Windowed / Borderless), VSync, and rebindable input controls.
-- [ ] **2D Smart Pathfinding**: Implement `NavigationAgent2D` / `NavigationServer2D` or dynamic raycast steering so enemies navigate dungeon walls seamlessly without getting stuck.
-- [ ] **Upgrade Screen Overhaul**: Dedicated card selection highlighting with an interactive **"Upgrade / Confirm"** button, reroll tokens, and audio stingers.
-- [ ] **New Enemy Archetypes & Boss Phases**: Melee dashers, explosive kamikaze drones, and multi-phase boss mechanics.
-- [ ] **Juice & Combat Feedback**: Screen shake, floating combat text, muzzle flashes, and dynamic parry freeze frames (hitstop).
+### 🔹 Phase 1: 2D Pathfinding & Navigation AI
+- [ ] **Navigation Mesh / Grid Architecture**: Configure navigation layer on walkable dungeon tiles (`NavigationRegion2D` / `AStar2D`).
+- [ ] **`NavigationAgent2D` Enemy Integration**: Replace direct-vector chase and cover movement in `base_enemy.gd` with intelligent obstacle avoidance around dungeon walls and corners.
+- [ ] **Line-of-Sight & Dynamic Routing**: Seamless transition between direct pursuit when clear and waypoint pathfinding when obstructed.
+- [ ] **Destructible Obstacle Awareness**: Enable enemies to either pathfind around destructible barriers or target them when blocking movement.
+
+### 🔹 Phase 2: Upgrade Screen System & Confirmation Logic
+- [ ] **Card Selection State Machine**: Decouple card clicking from instant application; allow selecting, inspecting, and toggling between card choices.
+- [ ] **Upgrade / Confirm Button Logic**: Introduce functional "Confirm Upgrade" action button (with gamepad/keyboard confirmation bindings).
+- [ ] **Reroll & Skip Backend**: Add run-based reroll budget/tokens and skip rewards (e.g. instant heal or extra XP).
+- [ ] **Deck & Pool Filtering Robustness**: Hardened safeguards preventing duplicate rolls or out-of-bounds upgrade level increments.
+
+### 🔹 Phase 3: Settings & Configuration Backend
+- [ ] **`SettingsManager` Autoload**: Centralized configuration singleton for saving/loading user preferences to `user://settings.cfg`.
+- [ ] **Audio Bus Routing**: Connect linear volume sliders to `AudioServer` buses (Master, Music, SFX).
+- [ ] **Display & Video API**: Backend support for Fullscreen, Borderless, Windowed modes, VSync toggling, and framerate limiting via `DisplayServer`.
+- [ ] **Input Remapping Backend**: Keybinding rebinding system with persistence for keyboard and mouse inputs.
+
+### 🔹 Phase 4: Core Combat & Systems Hardening
+- [ ] **Hitstop & Impact Timing**: Micro-freeze frame timer system on successful parry deflections and critical hits.
+- [ ] **Boss Attack Phase Logic**: Multi-phase state machine for `BossEnemy` (enrage state, projectile patterns, hazard spawning).
+- [ ] **Export Build Resource Manifest**: Replace raw `DirAccess` folder crawling with export-safe resource manifests for release PCK compatibility.
+
+### 🔹 Phase 5: Art, UI Skinning, SFX & VFX (User Art Pass)
+- [ ] **UI Reskinning**: Apply 9-patch textures, button frames, and typography from `SimplePixelArtUIpack`.
+- [ ] **Audio Integration**: Trigger new weapon sound effects, UI click/hover blips, and rarity stingers.
+- [ ] **VFX & Juice**: Screenshake shaders, floating combat numbers, and muzzle flashes.
 
 ---
 
